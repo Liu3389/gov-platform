@@ -1,0 +1,98 @@
+version: '3.8'
+
+services:
+  # ==================== MySQL ====================
+  mysql:
+    image: mysql:8.0.33
+    container_name: gov-mysql
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: root123456
+      MYSQL_DATABASE: nacos
+      TZ: Asia/Shanghai
+    volumes:
+      - ./mysql/init:/docker-entrypoint-initdb.d
+      - mysql_data:/var/lib/mysql
+    command:
+      --character-set-server=utf8mb4
+      --collation-server=utf8mb4_unicode_ci
+      --default-authentication-plugin=mysql_native_password
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-uroot", "-proot123456"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # ==================== Redis ====================
+  redis:
+    image: redis:7-alpine
+    container_name: gov-redis
+    restart: always
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    command: redis-server --appendonly yes
+
+  # ==================== Nacos ====================
+  nacos:
+    image: nacos/nacos-server:v2.2.3
+    container_name: gov-nacos
+    restart: always
+    ports:
+      - "8848:8848"
+      - "9848:9848"
+    environment:
+      MODE: standalone
+      SPRING_DATASOURCE_PLATFORM: mysql
+      MYSQL_SERVICE_HOST: mysql
+      MYSQL_SERVICE_PORT: 3306
+      MYSQL_SERVICE_DB_NAME: nacos
+      MYSQL_SERVICE_USER: root
+      MYSQL_SERVICE_PASSWORD: root123456
+      MYSQL_SERVICE_DB_PARAM: characterEncoding=utf8mb4&connectTimeout=10000&socketTimeout=30000&autoReconnect=true&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+      NACOS_AUTH_ENABLE: true
+      NACOS_AUTH_TOKEN: SecretKey012345678901234567890123456789012345678901234567890123456789
+      NACOS_AUTH_IDENTITY_KEY: serverIdentity
+      NACOS_AUTH_IDENTITY_VALUE: security
+    volumes:
+      - nacos_logs:/home/nacos/logs
+    depends_on:
+      mysql:
+        condition: service_healthy
+
+  # ==================== RabbitMQ ====================
+  rabbitmq:
+    image: rabbitmq:3.12-management-alpine
+    container_name: gov-rabbitmq
+    restart: always
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    volumes:
+      - rabbitmq_data:/var/lib/rabbitmq
+
+  # ==================== Nginx ====================
+  nginx:
+    image: nginx:1.25-alpine
+    container_name: gov-nginx
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf
+      - nginx_logs:/var/log/nginx
+    depends_on:
+      - nacos
+
+volumes:
+  mysql_data:
+  redis_data:
+  nacos_logs:
+  rabbitmq_data:
+  nginx_logs:

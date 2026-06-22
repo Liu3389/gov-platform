@@ -1,0 +1,117 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: gov-gateway
+  cloud:
+    nacos:
+      discovery:
+        server-addr: localhost:8848
+        namespace: gov-platform
+        group: DEFAULT_GROUP
+      config:
+        server-addr: localhost:8848
+        namespace: gov-platform
+        group: DEFAULT_GROUP
+        file-extension: yaml
+    gateway:
+      discovery:
+        locator:
+          enabled: true
+          lower-case-service-id: true
+      routes:
+        # ==================== 用户认证服务 ====================
+        - id: gov-user-service
+          uri: lb://gov-user-service
+          predicates:
+            - Path=/api/v1/user/**
+          filters:
+            - StripPrefix=2
+
+        # ==================== 事项管理服务 ====================
+        - id: gov-item-service
+          uri: lb://gov-item-service
+          predicates:
+            - Path=/api/v1/item/**
+          filters:
+            - StripPrefix=2
+
+        # ==================== 统一受理服务 ====================
+        - id: gov-reception-service
+          uri: lb://gov-reception-service
+          predicates:
+            - Path=/api/v1/reception/**
+          filters:
+            - StripPrefix=2
+
+        # ==================== 审批流转服务 ====================
+        - id: gov-activiti-service
+          uri: lb://gov-activiti-service
+          predicates:
+            - Path=/api/v1/workflow/**
+          filters:
+            - StripPrefix=2
+
+        # ==================== 电子证照服务 ====================
+        - id: gov-license-service
+          uri: lb://gov-license-service
+          predicates:
+            - Path=/api/v1/license/**
+          filters:
+            - StripPrefix=2
+
+        # ==================== 投诉建议服务 ====================
+        - id: gov-complaint-service
+          uri: lb://gov-complaint-service
+          predicates:
+            - Path=/api/v1/complaint/**
+          filters:
+            - StripPrefix=2
+
+        # ==================== 政务公开服务 ====================
+        - id: gov-open-service
+          uri: lb://gov-open-service
+          predicates:
+            - Path=/api/v1/open/**
+          filters:
+            - StripPrefix=2
+
+        # ==================== 数据共享服务 ====================
+        - id: gov-datashare-service
+          uri: lb://gov-datashare-service
+          predicates:
+            - Path=/api/v1/share/**
+          filters:
+            - StripPrefix=2
+
+        # ==================== 消息通知服务 ====================
+        - id: gov-message-service
+          uri: lb://gov-message-service
+          predicates:
+            - Path=/api/v1/message/**
+          filters:
+            - StripPrefix=2
+
+        # ==================== 监察审计服务 ====================
+        - id: gov-monitor-service
+          uri: lb://gov-monitor-service
+          predicates:
+            - Path=/api/v1/monitor/**
+          filters:
+            - StripPrefix=2
+
+# ==================== Knife4j 网关聚合配置 ====================
+knife4j:
+  gateway:
+    enabled: true
+    strategy: discover
+    discover:
+      enabled: true
+      version: openapi3
+
+# ==================== 日志配置 ====================
+logging:
+  level:
+    com.gov.gateway: debug
+    org.springframework.cloud.gateway: debug

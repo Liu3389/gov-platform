@@ -1,0 +1,78 @@
+# ==================== Java ====================
+*.class
+*.jar
+*.war
+*.ear
+*.log
+*.ctxt
+.mtj.tmp/
+hs_err_pid*
+replay_pid*
+
+# ==================== Maven ====================
+target/
+pom.xml.tag
+pom.xml.releaseBackup
+pom.xml.versionsBackup
+pom.xml.next
+release.properties
+dependency-reduced-pom.xml
+buildNumber.properties
+.mvn/timing.properties
+.mvn/wrapper/maven-wrapper.jar
+
+# ==================== IDE ====================
+# IDEA
+.idea/
+*.iml
+*.iws
+*.ipr
+out/
+
+# Eclipse
+.settings/
+.classpath
+.project
+.metadata/
+bin/
+tmp/
+
+# VS Code
+.vscode/
+
+# ==================== Spring Boot ====================
+*.pid
+
+# ==================== Logs ====================
+logs/
+*.log
+*.log.*
+
+# ==================== OS ====================
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# ==================== Docker ====================
+docker/mysql/data/
+docker/redis/data/
+docker/nacos/logs/
+docker/rabbitmq/data/
+docker/nginx/logs/
+
+# ==================== Application ====================
+# 本地配置覆盖（不提交）
+application-local.yml
+application-local.properties
+.env
+
+# ==================== Temp ====================
+*.tmp
+*.bak
+*.swp
+*~.nib
+*.orig
