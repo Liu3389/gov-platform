@@ -1,5 +1,6 @@
 package com.gov.common.result;
 
+import cn.hutool.core.util.IdUtil;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
@@ -35,8 +36,12 @@ public class Result<T> implements Serializable {
     @Schema(description = "时间戳")
     private long timestamp;
 
+    @Schema(description = "链路追踪ID（用于日志追踪和问题排查）")
+    private String traceId;
+
     public Result() {
         this.timestamp = System.currentTimeMillis();
+        this.traceId = IdUtil.fastSimpleUUID();
     }
 
     public Result(int code, String message, T data) {
@@ -44,6 +49,7 @@ public class Result<T> implements Serializable {
         this.message = message;
         this.data = data;
         this.timestamp = System.currentTimeMillis();
+        this.traceId = IdUtil.fastSimpleUUID();
     }
 
     // ==================== 成功返回 ====================
@@ -120,5 +126,12 @@ public class Result<T> implements Serializable {
      */
     public static <T> Result<T> notFound(String message) {
         return new Result<>(404, message, null);
+    }
+
+    /**
+     * 服务器内部错误
+     */
+    public static <T> Result<T> serverError(String message) {
+        return new Result<>(500, message, null);
     }
 }

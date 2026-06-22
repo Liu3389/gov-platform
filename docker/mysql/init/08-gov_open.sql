@@ -1,0 +1,160 @@
+USE gov_open;
+
+-- 公开目录表
+CREATE TABLE IF NOT EXISTS t_open_catalog (
+    id              BIGINT NOT NULL COMMENT '主键ID（雪花ID）',
+    catalog_code    VARCHAR(64)  NOT NULL COMMENT '目录编码',
+    catalog_name    VARCHAR(128) NOT NULL COMMENT '目录名称',
+    parent_id       BIGINT       DEFAULT 0 COMMENT '父级ID',
+    catalog_level   INT          DEFAULT 1 COMMENT '目录层级',
+    catalog_type    VARCHAR(32)  DEFAULT NULL COMMENT '目录类型',
+    sort            INT          DEFAULT 0 COMMENT '排序',
+    status          VARCHAR(32)  DEFAULT '1' COMMENT '状态',
+    create_time     DATETIME     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time     DATETIME     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    create_by       BIGINT       DEFAULT NULL COMMENT '创建人ID',
+    update_by       BIGINT       DEFAULT NULL COMMENT '更新人ID',
+    deleted         TINYINT      DEFAULT 0 COMMENT '逻辑删除：0正常 1删除',
+    PRIMARY KEY (id),
+    UNIQUE KEY uk_catalog_code (catalog_code),
+    KEY idx_parent_id (parent_id),
+    KEY idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='公开目录表';
+
+-- 通知公告表
+CREATE TABLE IF NOT EXISTS t_open_notice (
+    id                BIGINT NOT NULL COMMENT '主键ID（雪花ID）',
+    notice_code       VARCHAR(64)  NOT NULL COMMENT '通知公告编码',
+    title             VARCHAR(256) NOT NULL COMMENT '标题',
+    content           TEXT         DEFAULT NULL COMMENT '内容',
+    notice_type       VARCHAR(32)  DEFAULT NULL COMMENT '通知类型',
+    publish_dept_id   BIGINT       NOT NULL COMMENT '发布部门ID',
+    publish_dept_name VARCHAR(128) DEFAULT NULL COMMENT '发布部门名称',
+    publish_user_id   BIGINT       NOT NULL COMMENT '发布人ID',
+    publish_user_name VARCHAR(64)  DEFAULT NULL COMMENT '发布人姓名',
+    publish_time      DATETIME     NOT NULL COMMENT '发布时间',
+    expire_time       DATETIME     DEFAULT NULL COMMENT '过期时间',
+    top_flag          TINYINT      DEFAULT 0 COMMENT '置顶标记',
+    view_count        INT          DEFAULT 0 COMMENT '浏览次数',
+    status            VARCHAR(32)  DEFAULT '1' COMMENT '状态',
+    create_time       DATETIME     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time       DATETIME     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    create_by         BIGINT       DEFAULT NULL COMMENT '创建人ID',
+    update_by         BIGINT       DEFAULT NULL COMMENT '更新人ID',
+    deleted           TINYINT      DEFAULT 0 COMMENT '逻辑删除：0正常 1删除',
+    PRIMARY KEY (id),
+    UNIQUE KEY uk_notice_code (notice_code),
+    KEY idx_publish_dept_id (publish_dept_id),
+    KEY idx_publish_time (publish_time),
+    KEY idx_notice_type (notice_type),
+    KEY idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='通知公告表';
+
+-- 政策法规表
+CREATE TABLE IF NOT EXISTS t_open_policy (
+    id                BIGINT NOT NULL COMMENT '主键ID（雪花ID）',
+    policy_code       VARCHAR(64)  NOT NULL COMMENT '政策编码',
+    policy_name       VARCHAR(256) NOT NULL COMMENT '政策名称',
+    policy_type       VARCHAR(32)  DEFAULT NULL COMMENT '政策类型',
+    publish_dept_id   BIGINT       NOT NULL COMMENT '发布部门ID',
+    publish_dept_name VARCHAR(128) DEFAULT NULL COMMENT '发布部门名称',
+    publish_date      DATE         DEFAULT NULL COMMENT '发布日期',
+    implement_date    DATE         DEFAULT NULL COMMENT '实施日期',
+    effective_status  VARCHAR(32)  DEFAULT NULL COMMENT '效力状态',
+    content           TEXT         DEFAULT NULL COMMENT '内容',
+    file_url          VARCHAR(512) DEFAULT NULL COMMENT '文件地址',
+    keywords          VARCHAR(256) DEFAULT NULL COMMENT '关键词',
+    view_count        INT          DEFAULT 0 COMMENT '浏览次数',
+    status            VARCHAR(32)  DEFAULT '1' COMMENT '状态',
+    create_time       DATETIME     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time       DATETIME     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    create_by         BIGINT       DEFAULT NULL COMMENT '创建人ID',
+    update_by         BIGINT       DEFAULT NULL COMMENT '更新人ID',
+    deleted           TINYINT      DEFAULT 0 COMMENT '逻辑删除：0正常 1删除',
+    PRIMARY KEY (id),
+    UNIQUE KEY uk_policy_code (policy_code),
+    KEY idx_publish_dept_id (publish_dept_id),
+    KEY idx_policy_type (policy_type),
+    KEY idx_publish_date (publish_date),
+    KEY idx_effective_status (effective_status),
+    KEY idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='政策法规表';
+
+-- 依申请公开表
+CREATE TABLE IF NOT EXISTS t_open_apply (
+    id              BIGINT NOT NULL COMMENT '主键ID（雪花ID）',
+    apply_no        VARCHAR(64)  NOT NULL COMMENT '申请编号',
+    user_id         BIGINT       NOT NULL COMMENT '申请人ID',
+    user_name       VARCHAR(64)  NOT NULL COMMENT '申请人姓名',
+    user_phone      VARCHAR(32)  DEFAULT NULL COMMENT '申请人电话[脱敏][展示掩码]',
+    user_id_card    VARCHAR(32)  DEFAULT NULL COMMENT '申请人身份证号[脱敏][SM4加密]',
+    apply_content   TEXT         NOT NULL COMMENT '申请内容',
+    apply_reason    VARCHAR(256) DEFAULT NULL COMMENT '申请原因',
+    apply_type      VARCHAR(32)  DEFAULT NULL COMMENT '申请类型',
+    dept_id         BIGINT       DEFAULT NULL COMMENT '受理部门ID',
+    handler_id      BIGINT       DEFAULT NULL COMMENT '处理人ID',
+    status          VARCHAR(32)  DEFAULT '0' COMMENT '申请状态',
+    apply_time      DATETIME     NOT NULL COMMENT '申请时间',
+    accept_time     DATETIME     DEFAULT NULL COMMENT '受理时间',
+    reply_time      DATETIME     DEFAULT NULL COMMENT '回复时间',
+    reply_content   TEXT         DEFAULT NULL COMMENT '回复内容',
+    reply_type      VARCHAR(32)  DEFAULT NULL COMMENT '回复类型',
+    fee_flag        TINYINT      DEFAULT 0 COMMENT '收费标记',
+    fee_amount      DECIMAL(10,2) DEFAULT 0.00 COMMENT '收费金额',
+    create_time     DATETIME     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time     DATETIME     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    create_by       BIGINT       DEFAULT NULL COMMENT '创建人ID',
+    update_by       BIGINT       DEFAULT NULL COMMENT '更新人ID',
+    deleted         TINYINT      DEFAULT 0 COMMENT '逻辑删除：0正常 1删除',
+    PRIMARY KEY (id),
+    UNIQUE KEY uk_apply_no (apply_no),
+    KEY idx_user_id (user_id),
+    KEY idx_dept_id (dept_id),
+    KEY idx_handler_id (handler_id),
+    KEY idx_status (status),
+    KEY idx_apply_time (apply_time)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='依申请公开表';
+
+-- 内容审核表
+CREATE TABLE IF NOT EXISTS t_open_content (
+    id              BIGINT NOT NULL COMMENT '主键ID（雪花ID）',
+    content_type    VARCHAR(32)  NOT NULL COMMENT '内容类型',
+    content_id      BIGINT       NOT NULL COMMENT '内容ID',
+    audit_status    VARCHAR(32)  DEFAULT '0' COMMENT '审核状态',
+    audit_by        BIGINT       DEFAULT NULL COMMENT '审核人ID',
+    audit_time      DATETIME     DEFAULT NULL COMMENT '审核时间',
+    audit_opinion   TEXT         DEFAULT NULL COMMENT '审核意见',
+    create_time     DATETIME     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time     DATETIME     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    create_by       BIGINT       DEFAULT NULL COMMENT '创建人ID',
+    update_by       BIGINT       DEFAULT NULL COMMENT '更新人ID',
+    deleted         TINYINT      DEFAULT 0 COMMENT '逻辑删除：0正常 1删除',
+    PRIMARY KEY (id),
+    KEY idx_content_type_id (content_type, content_id),
+    KEY idx_audit_by (audit_by),
+    KEY idx_audit_status (audit_status),
+    KEY idx_audit_time (audit_time)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='内容审核表';
+
+-- 公开反馈表
+CREATE TABLE IF NOT EXISTS t_open_feedback (
+    id              BIGINT NOT NULL COMMENT '主键ID（雪花ID）',
+    content_type    VARCHAR(32)  NOT NULL COMMENT '内容类型',
+    content_id      BIGINT       NOT NULL COMMENT '内容ID',
+    user_id         BIGINT       NOT NULL COMMENT '反馈人ID',
+    user_name       VARCHAR(64)  DEFAULT NULL COMMENT '反馈人姓名',
+    feedback_type   VARCHAR(32)  DEFAULT NULL COMMENT '反馈类型',
+    feedback_content TEXT        DEFAULT NULL COMMENT '反馈内容',
+    status          VARCHAR(32)  DEFAULT '0' COMMENT '状态',
+    handle_time     DATETIME     DEFAULT NULL COMMENT '处理时间',
+    handle_result   VARCHAR(512) DEFAULT NULL COMMENT '处理结果',
+    create_time     DATETIME     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time     DATETIME     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    create_by       BIGINT       DEFAULT NULL COMMENT '创建人ID',
+    update_by       BIGINT       DEFAULT NULL COMMENT '更新人ID',
+    deleted         TINYINT      DEFAULT 0 COMMENT '逻辑删除：0正常 1删除',
+    PRIMARY KEY (id),
+    KEY idx_content_type_id (content_type, content_id),
+    KEY idx_user_id (user_id),
+    KEY idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='公开反馈表';

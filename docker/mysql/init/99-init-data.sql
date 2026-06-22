@@ -1,5 +1,6 @@
 -- =====================================================
 -- 智慧政务一体化便民服务平台 - 初始化数据脚本
+-- 插入系统字典、默认配置、行政区划等基础数据
 -- =====================================================
 
 USE gov_user;
@@ -74,3 +75,20 @@ INSERT INTO t_region (id, region_code, region_name, parent_code, region_level, s
 (4, '320507', '相城区', '320500', 3, 2, 1, NOW()),
 (5, '320508', '姑苏区', '320500', 3, 3, 1, NOW()),
 (6, '320509', '工业园区', '320500', 3, 4, 1, NOW());
+
+-- 初始化消息模板
+USE gov_message;
+INSERT INTO t_message_template (id, template_code, template_name, template_content, channel, status, create_time) VALUES
+(1, 'TODO_NOTICE', '待办任务通知', '您有新的待办任务：${itemName}，请尽快处理。', 'inbox', 1, NOW()),
+(2, 'CASE_FINISH', '办件完成通知', '您的申请已办结，办件号：${applyNo}，证照编号：${licenseNo}。', 'inbox', 1, NOW()),
+(3, 'WARNING_YELLOW', '黄牌预警通知', '任务即将超期：${itemName}，剩余时间不足4小时，请尽快处理。', 'inbox', 1, NOW()),
+(4, 'WARNING_RED', '红牌预警通知', '任务已超期：${itemName}，请立即处理。', 'inbox', 1, NOW());
+
+-- 初始化证照目录
+USE gov_license;
+INSERT INTO t_license_catalog (id, catalog_code, catalog_name, dept_id, template_url, status, create_time) VALUES
+(1, 'ID_CARD', '身份证', 10002, '/template/id_card.pdf', 1, NOW()),
+(2, 'BIRTH_CERT', '出生证明', 10003, '/template/birth_cert.pdf', 1, NOW()),
+(3, 'MARRIAGE_CERT', '结婚证', 10003, '/template/marriage_cert.pdf', 1, NOW()),
+(4, 'SOCIAL_CARD', '社保卡', 10004, '/template/social_card.pdf', 1, NOW()),
+(5, 'HEALTH_CERT', '健康证', 10005, '/template/health_cert.pdf', 1, NOW());

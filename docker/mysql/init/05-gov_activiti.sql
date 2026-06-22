@@ -1,0 +1,211 @@
+USE gov_activiti;
+
+-- 流程定义扩展表
+CREATE TABLE IF NOT EXISTS t_workflow_process (
+    id               BIGINT NOT NULL COMMENT '主键ID（雪花ID）',
+    process_key      VARCHAR(64)  NOT NULL COMMENT '流程定义Key',
+    process_name     VARCHAR(128) NOT NULL COMMENT '流程名称',
+    process_category VARCHAR(64)  DEFAULT NULL COMMENT '流程分类',
+    bpmn_url         VARCHAR(512) DEFAULT NULL COMMENT 'BPMN文件地址',
+    version          INT          DEFAULT 1 COMMENT '版本号',
+    description      VARCHAR(512) DEFAULT NULL COMMENT '流程描述',
+    status           VARCHAR(32)  DEFAULT '1' COMMENT '状态',
+    create_time      DATETIME     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time      DATETIME     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    create_by        BIGINT       DEFAULT NULL COMMENT '创建人ID',
+    update_by        BIGINT       DEFAULT NULL COMMENT '更新人ID',
+    deleted          TINYINT      DEFAULT 0 COMMENT '逻辑删除：0正常 1删除',
+    PRIMARY KEY (id),
+    UNIQUE KEY uk_process_key_version (process_key, version),
+    KEY idx_process_key (process_key),
+    KEY idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='流程定义扩展表';
+
+-- 流程实例扩展表
+CREATE TABLE IF NOT EXISTS t_workflow_instance (
+    id               BIGINT NOT NULL COMMENT '主键ID（雪花ID）',
+    instance_id      VARCHAR(64)  NOT NULL COMMENT '流程实例ID',
+    process_key      VARCHAR(64)  NOT NULL COMMENT '流程定义Key',
+    apply_no         VARCHAR(64)  NOT NULL COMMENT '办件编号',
+    item_id          BIGINT       DEFAULT NULL COMMENT '事项ID',
+    item_name        VARCHAR(128) DEFAULT NULL COMMENT '事项名称',
+    user_id          BIGINT       DEFAULT NULL COMMENT '申请人ID',
+    user_name        VARCHAR(64)  DEFAULT NULL COMMENT '申请人姓名',
+    dept_id          BIGINT       DEFAULT NULL COMMENT '部门ID',
+    start_time       DATETIME     DEFAULT NULL COMMENT '开始时间',
+    end_time         DATETIME     DEFAULT NULL COMMENT '结束时间',
+    duration         BIGINT       DEFAULT NULL COMMENT '耗时（毫秒）',
+    status           VARCHAR(32)  DEFAULT '0' COMMENT '流程状态',
+    result           VARCHAR(32)  DEFAULT NULL COMMENT '流程结果',
+    create_time      DATETIME     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time      DATETIME     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    create_by        BIGINT       DEFAULT NULL COMMENT '创建人ID',
+    update_by        BIGINT       DEFAULT NULL COMMENT '更新人ID',
+    deleted          TINYINT      DEFAULT 0 COMMENT '逻辑删除：0正常 1删除',
+    PRIMARY KEY (id),
+    UNIQUE KEY uk_instance_id (instance_id),
+    KEY idx_process_key (process_key),
+    KEY idx_apply_no (apply_no),
+    KEY idx_user_id (user_id),
+    KEY idx_dept_id (dept_id),
+    KEY idx_status (status)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='流程实例扩展表';
+
+-- 任务扩展表
+CREATE TABLE IF NOT EXISTS t_workflow_task (
+    id               BIGINT NOT NULL COMMENT '主键ID（雪花ID）',
+    task_id          VARCHAR(64)  NOT NULL COMMENT '任务ID',
+    instance_id      VARCHAR(64)  NOT NULL COMMENT '流程实例ID',
+    process_key      VARCHAR(64)  NOT NULL COMMENT '流程定义Key',
+    task_name        VARCHAR(128) NOT NULL COMMENT '任务名称',
+    task_key         VARCHAR(64)  DEFAULT NULL COMMENT '任务Key',
+    assignee         VARCHAR(64)  DEFAULT NULL COMMENT '责任人',
+    assignee_name    VARCHAR(64)  DEFAULT NULL COMMENT '责任人姓名',
+    claim_time       DATETIME     DEFAULT NULL COMMENT '认领时间',
+    start_time       DATETIME     DEFAULT NULL COMMENT '开始时间',
+    end_time         DATETIME     DEFAULT NULL COMMENT '结束时间',
+    due_time         DATETIME     DEFAULT NULL COMMENT '到期时间',
+    duration         BIGINT       DEFAULT NULL COMMENT '耗时（毫秒）',
+    status           VARCHAR(32)  DEFAULT '0' COMMENT '任务状态',
+    priority         INT          DEFAULT 0 COMMENT '优先级',
+    create_time      DATETIME     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time      DATETIME     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    create_by        BIGINT       DEFAULT NULL COMMENT '创建人ID',
+    update_by        BIGINT       DEFAULT NULL COMMENT '更新人ID',
+    deleted          TINYINT      DEFAULT 0 COMMENT '逻辑删除：0正常 1删除',
+    PRIMARY KEY (id),
+    UNIQUE KEY uk_task_id (task_id),
+    KEY idx_instance_id (instance_id),
+    KEY idx_process_key (process_key),
+    KEY idx_assignee (assignee),
+    KEY idx_status (status),
+    KEY idx_due_time (due_time)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='任务扩展表';
+
+-- 审批意见表
+CREATE TABLE IF NOT EXISTS t_workflow_opinion (
+    id               BIGINT NOT NULL COMMENT '主键ID（雪花ID）',
+    task_id          VARCHAR(64)  NOT NULL COMMENT '任务ID',
+    instance_id      VARCHAR(64)  NOT NULL COMMENT '流程实例ID',
+    apply_no         VARCHAR(64)  NOT NULL COMMENT '办件编号',
+    operator_id      BIGINT       NOT NULL COMMENT '操作人ID',
+    operator_name    VARCHAR(64)  NOT NULL COMMENT '操作人姓名',
+    opinion_type     VARCHAR(32)  DEFAULT NULL COMMENT '意见类型',
+    opinion_content  TEXT         DEFAULT NULL COMMENT '意见内容',
+    operate_time     DATETIME     DEFAULT NULL COMMENT '操作时间',
+    next_assignee    VARCHAR(64)  DEFAULT NULL COMMENT '下一处理人',
+    create_time      DATETIME     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time      DATETIME     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    create_by        BIGINT       DEFAULT NULL COMMENT '创建人ID',
+    update_by        BIGINT       DEFAULT NULL COMMENT '更新人ID',
+    deleted          TINYINT      DEFAULT 0 COMMENT '逻辑删除：0正常 1删除',
+    PRIMARY KEY (id),
+    KEY idx_task_id (task_id),
+    KEY idx_instance_id (instance_id),
+    KEY idx_apply_no (apply_no),
+    KEY idx_operator_id (operator_id),
+    KEY idx_opinion_type (opinion_type),
+    KEY idx_operate_time (operate_time)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='审批意见表';
+
+-- 会签记录表
+CREATE TABLE IF NOT EXISTS t_workflow_countersign (
+    id               BIGINT NOT NULL COMMENT '主键ID（雪花ID）',
+    task_id          VARCHAR(64)  NOT NULL COMMENT '任务ID',
+    instance_id      VARCHAR(64)  NOT NULL COMMENT '流程实例ID',
+    user_id          BIGINT       NOT NULL COMMENT '会签人ID',
+    user_name        VARCHAR(64)  DEFAULT NULL COMMENT '会签人姓名',
+    dept_id          BIGINT       DEFAULT NULL COMMENT '部门ID',
+    dept_name        VARCHAR(128) DEFAULT NULL COMMENT '部门名称',
+    sign_result      VARCHAR(32)  DEFAULT NULL COMMENT '会签结果',
+    sign_time        DATETIME     DEFAULT NULL COMMENT '会签时间',
+    sign_opinion     TEXT         DEFAULT NULL COMMENT '会签意见',
+    create_time      DATETIME     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time      DATETIME     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    create_by        BIGINT       DEFAULT NULL COMMENT '创建人ID',
+    update_by        BIGINT       DEFAULT NULL COMMENT '更新人ID',
+    deleted          TINYINT      DEFAULT 0 COMMENT '逻辑删除：0正常 1删除',
+    PRIMARY KEY (id),
+    KEY idx_task_id (task_id),
+    KEY idx_instance_id (instance_id),
+    KEY idx_user_id (user_id),
+    KEY idx_dept_id (dept_id),
+    KEY idx_sign_result (sign_result)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='会签记录表';
+
+-- 催办记录表
+CREATE TABLE IF NOT EXISTS t_workflow_reminder (
+    id               BIGINT NOT NULL COMMENT '主键ID（雪花ID）',
+    instance_id      VARCHAR(64)  NOT NULL COMMENT '流程实例ID',
+    task_id          VARCHAR(64)  DEFAULT NULL COMMENT '任务ID',
+    apply_no         VARCHAR(64)  NOT NULL COMMENT '办件编号',
+    reminder_type    VARCHAR(32)  DEFAULT NULL COMMENT '催办类型',
+    reminder_level   VARCHAR(32)  DEFAULT NULL COMMENT '催办级别',
+    reminder_time    DATETIME     NOT NULL COMMENT '催办时间',
+    reminder_by      BIGINT       NOT NULL COMMENT '催办人ID',
+    reminder_content TEXT         DEFAULT NULL COMMENT '催办内容',
+    status           VARCHAR(32)  DEFAULT '0' COMMENT '状态',
+    create_time      DATETIME     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time      DATETIME     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    create_by        BIGINT       DEFAULT NULL COMMENT '创建人ID',
+    update_by        BIGINT       DEFAULT NULL COMMENT '更新人ID',
+    deleted          TINYINT      DEFAULT 0 COMMENT '逻辑删除：0正常 1删除',
+    PRIMARY KEY (id),
+    KEY idx_instance_id (instance_id),
+    KEY idx_task_id (task_id),
+    KEY idx_apply_no (apply_no),
+    KEY idx_reminder_by (reminder_by),
+    KEY idx_reminder_time (reminder_time)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='催办记录表';
+
+-- 委托记录表
+CREATE TABLE IF NOT EXISTS t_workflow_delegate (
+    id               BIGINT NOT NULL COMMENT '主键ID（雪花ID）',
+    task_id          VARCHAR(64)  NOT NULL COMMENT '任务ID',
+    instance_id      VARCHAR(64)  NOT NULL COMMENT '流程实例ID',
+    from_user_id     BIGINT       NOT NULL COMMENT '委托人ID',
+    from_user_name   VARCHAR(64)  NOT NULL COMMENT '委托人姓名',
+    to_user_id       BIGINT       NOT NULL COMMENT '被委托人ID',
+    to_user_name     VARCHAR(64)  NOT NULL COMMENT '被委托人姓名',
+    delegate_type    VARCHAR(32)  DEFAULT NULL COMMENT '委托类型',
+    delegate_time    DATETIME     DEFAULT NULL COMMENT '委托时间',
+    delegate_reason  VARCHAR(512) DEFAULT NULL COMMENT '委托原因',
+    status           VARCHAR(32)  DEFAULT '0' COMMENT '状态',
+    create_time      DATETIME     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time      DATETIME     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    create_by        BIGINT       DEFAULT NULL COMMENT '创建人ID',
+    update_by        BIGINT       DEFAULT NULL COMMENT '更新人ID',
+    deleted          TINYINT      DEFAULT 0 COMMENT '逻辑删除：0正常 1删除',
+    PRIMARY KEY (id),
+    KEY idx_task_id (task_id),
+    KEY idx_instance_id (instance_id),
+    KEY idx_from_user_id (from_user_id),
+    KEY idx_to_user_id (to_user_id),
+    KEY idx_delegate_time (delegate_time)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='委托记录表';
+
+-- 流程历史扩展表
+CREATE TABLE IF NOT EXISTS t_workflow_history (
+    id               BIGINT NOT NULL COMMENT '主键ID（雪花ID）',
+    instance_id      VARCHAR(64)  NOT NULL COMMENT '流程实例ID',
+    process_key      VARCHAR(64)  NOT NULL COMMENT '流程定义Key',
+    apply_no         VARCHAR(64)  NOT NULL COMMENT '办件编号',
+    archive_time     DATETIME     NOT NULL COMMENT '归档时间',
+    archive_by       BIGINT       DEFAULT NULL COMMENT '归档人ID',
+    total_duration   BIGINT       DEFAULT NULL COMMENT '总耗时（毫秒）',
+    node_count       INT          DEFAULT 0 COMMENT '节点数量',
+    approve_count    INT          DEFAULT 0 COMMENT '审批次数',
+    reject_count     INT          DEFAULT 0 COMMENT '驳回次数',
+    result           VARCHAR(32)  DEFAULT NULL COMMENT '流程结果',
+    remark           VARCHAR(512) DEFAULT NULL COMMENT '备注',
+    create_time      DATETIME     DEFAULT CURRENT_TIMESTAMP COMMENT '创建时间',
+    update_time      DATETIME     DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP COMMENT '更新时间',
+    create_by        BIGINT       DEFAULT NULL COMMENT '创建人ID',
+    update_by        BIGINT       DEFAULT NULL COMMENT '更新人ID',
+    deleted          TINYINT      DEFAULT 0 COMMENT '逻辑删除：0正常 1删除',
+    PRIMARY KEY (id),
+    UNIQUE KEY uk_instance_id (instance_id),
+    KEY idx_process_key (process_key),
+    KEY idx_apply_no (apply_no),
+    KEY idx_archive_time (archive_time)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci COMMENT='流程历史扩展表';

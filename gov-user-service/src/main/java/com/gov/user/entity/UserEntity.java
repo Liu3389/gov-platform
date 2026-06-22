@@ -1,8 +1,5 @@
 package com.gov.user.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableLogic;
 import com.baomidou.mybatisplus.annotation.TableName;
 import com.gov.common.entity.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -17,10 +14,6 @@ import lombok.EqualsAndHashCode;
 @TableName("t_user_info")
 @Schema(description = "用户信息")
 public class UserEntity extends BaseEntity {
-
-    @TableId(type = IdType.ASSIGN_ID)
-    @Schema(description = "用户ID（雪花ID）")
-    private Long id;
 
     @Schema(description = "用户名")
     private String username;
@@ -48,8 +41,4 @@ public class UserEntity extends BaseEntity {
 
     @Schema(description = "最后登录时间")
     private java.time.LocalDateTime lastLoginTime;
-
-    @TableLogic
-    @Schema(description = "逻辑删除：0正常 1删除")
-    private Integer deleted;
 }

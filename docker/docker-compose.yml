@@ -13,6 +13,9 @@ services:
       MYSQL_DATABASE: nacos
       TZ: Asia/Shanghai
     volumes:
+      # ==================== SQL 一键执行 ====================
+      # Docker 按文件名顺序自动执行 init/ 下所有 .sql 文件：
+      # 01-init-db.sql → 02~11建表 → 99-init-data.sql
       - ./mysql/init:/docker-entrypoint-initdb.d
       - mysql_data:/var/lib/mysql
     command:
