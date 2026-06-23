@@ -14,8 +14,11 @@
 | 4  | [环境搭建指南.md](环境搭建指南.md)             | Docker、MySQL、Redis、Nacos、调试 | 全员   | 理解本地环境配置和调试流程            |
 | 5  | [AI编码Prompt模板.md](AI编码Prompt模板.md) | AI 使用规范、Prompt 模板           | 全员   | **核心：复制模板给 AI 生成代码**     |
 | 6  | [数据库设计文档.md](数据库设计文档.md)           | 10 个服务表结构、建表模板、Entity 模板    | 全员   | **核心：生成建表 SQL 和 Entity** |
-| 7  | [工作流设计文档.md](工作流设计文档.md)           | Activiti BPMN、流程节点、监听器      | 组员B  | **核心：生成 BPMN 和流程代码**     |
+| 7  | [工作流设计文档.md](工作流设计文档.md)           | Activiti BPMN、流程节点、监听器      | 组员C  | **核心：生成 BPMN 和流程代码**     |
 | 8  | [业务流程说明.md](业务流程说明.md)             | 黄金流程图、服务调用链、场景详解            | 全员   | 理解核心业务逻辑和 AI 约束          |
+| 9  | [数据库开发规范.md](数据库开发规范.md)           | 建表铁律、字段规范、索引规范、AI Prompt    | 全员   | 生成数据库代码时遵循铁律规范           |
+| 10 | [团队协作手册.md](../团队协作手册.md)             | 代码审查、分支规范、PR流程、跨模块变更      | 全员   | 团队协作和代码合并规范               |
+| 11 | [队员上手开发指南.md](../队员上手开发指南.md)       | 从克隆到合并的完整流程               | 新成员 | 快速上手开发流程                   |
 
 ***
 
@@ -54,12 +57,12 @@
 | gov-user-service      | 8081 | gov\_user      | 1        | 组员A     |
 | gov-item-service      | 8092 | gov\_item      | 2        | 组员A     |
 | gov-reception-service | 8083 | gov\_reception | 3        | 组员B     |
-| gov-activiti-service  | 8084 | gov\_activiti  | 4        | 组员B     |
+| gov-activiti-service  | 8084 | gov\_activiti  | 4        | 组员C     |
 | gov-license-service   | 8085 | gov\_license   | 5        | 组员C     |
-| gov-complaint-service | 8086 | gov\_complaint | 6        | 组员C     |
-| gov-open-service      | 8087 | gov\_open      | 7        | 组员D     |
+| gov-complaint-service | 8086 | gov\_complaint | 6        | 组员D     |
+| gov-open-service      | 8087 | gov\_open      | 7        | 组员A     |
 | gov-datashare-service | 8088 | gov\_datashare | 8        | 组员D     |
-| gov-message-service   | 8089 | gov\_message   | 9        | 组员A/B协助 |
+| gov-message-service   | 8089 | gov\_message   | 9        | 组员D     |
 | gov-monitor-service   | 8090 | gov\_monitor   | 10       | 组长      |
 
 ### 3.2 技术栈版本
@@ -76,7 +79,7 @@
 | 持久层    | MySQL                | 8.0.33         |
 | 持久层    | Druid                | 1.2.20         |
 | 缓存     | Redis                | 7.x            |
-| 工作流    | Activiti             | 7.7.0          |
+| 工作流    | Activiti             | 7.1.0.M6       |
 | 接口文档   | Knife4j              | 4.4.0          |
 | 工具类    | Hutool               | 5.8.25         |
 | JSON   | Fastjson2            | 2.0.43         |
@@ -149,7 +152,7 @@
 | 检查项          | 状态 | 说明                                                                           |
 | ------------ | -- | ---------------------------------------------------------------------------- |
 | 10 个服务全覆盖    | ✅  | 目录树、数据库设计、业务流程全覆盖                                                            |
-| 65 张表全覆盖     | ✅  | 数据库设计文档包含所有表结构                                                               |
+| 72 张表全覆盖     | ✅  | 数据库设计文档包含所有表结构（实际统计：gov_user 13张 + gov_item 8张 + gov_reception 7张 + gov_activiti 8张 + gov_license 6张 + gov_complaint 6张 + gov_open 6张 + gov_datashare 6张 + gov_message 5张 + gov_monitor 7张） |
 | 建表 SQL 示例    | ✅  | 关键表有建表 SQL 示例（t\_user\_info、t\_dept\_info、t\_menu、t\_dict\_data、t\_region 等） |
 | BPMN 流程模板    | ✅  | 工作流设计文档包含 4 个核心流程模板                                                          |
 | AI Prompt 模板 | ✅  | 所有文档都有 AI Prompt 模板                                                          |

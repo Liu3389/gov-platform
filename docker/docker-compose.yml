@@ -69,6 +69,17 @@ services:
     volumes:
       - rabbitmq_data:/var/lib/rabbitmq
 
+  # ==================== Sentinel Dashboard ====================
+  sentinel:
+    image: bladex/sentinel-dashboard:1.8.6
+    container_name: gov-sentinel
+    restart: always
+    ports:
+      - "8858:8858"
+    environment:
+      - SENTINEL_AUTH_USERNAME=sentinel
+      - SENTINEL_AUTH_PASSWORD=sentinel
+
   # ==================== Nginx ====================
   nginx:
     image: nginx:1.25-alpine

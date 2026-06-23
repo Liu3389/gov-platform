@@ -48,7 +48,7 @@ public class NoticeController {
     @Operation(summary = "新增")
     @Log(module = "政务公开", action = "新增公告")
     @PostMapping
-    public Result<Void> add(@Valid @RequestBody NoticeEntity entity) {
+    public Result<Void> add(@Parameter(description = "通知公告信息") @Valid @RequestBody NoticeEntity entity) {
         noticeService.save(entity);
         return Result.success();
     }
@@ -56,7 +56,7 @@ public class NoticeController {
     @Operation(summary = "更新")
     @Log(module = "政务公开", action = "更新公告")
     @PutMapping
-    public Result<Void> update(@Valid @RequestBody NoticeEntity entity) {
+    public Result<Void> update(@Parameter(description = "通知公告信息") @Valid @RequestBody NoticeEntity entity) {
         NoticeEntity exist = noticeService.getById(entity.getId());
         if (exist == null || exist.getDeleted() == 1) {
             return Result.notFound("数据不存在");

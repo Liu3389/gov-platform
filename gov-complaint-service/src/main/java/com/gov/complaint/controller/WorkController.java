@@ -48,7 +48,7 @@ public class WorkController {
     @Operation(summary = "新增")
     @Log(module = "投诉建议", action = "新增工单")
     @PostMapping
-    public Result<Void> add(@Valid @RequestBody WorkEntity entity) {
+    public Result<Void> add(@Parameter(description = "投诉工单信息") @Valid @RequestBody WorkEntity entity) {
         workService.save(entity);
         return Result.success();
     }
@@ -56,7 +56,7 @@ public class WorkController {
     @Operation(summary = "更新")
     @Log(module = "投诉建议", action = "更新工单")
     @PutMapping
-    public Result<Void> update(@Valid @RequestBody WorkEntity entity) {
+    public Result<Void> update(@Parameter(description = "投诉工单信息") @Valid @RequestBody WorkEntity entity) {
         WorkEntity exist = workService.getById(entity.getId());
         if (exist == null || exist.getDeleted() == 1) {
             return Result.notFound("数据不存在");

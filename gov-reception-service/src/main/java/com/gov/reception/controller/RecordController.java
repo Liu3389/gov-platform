@@ -48,7 +48,7 @@ public class RecordController {
     @Operation(summary = "新增")
     @Log(module = "统一受理", action = "新增办件")
     @PostMapping
-    public Result<Void> add(@Valid @RequestBody RecordEntity entity) {
+    public Result<Void> add(@Parameter(description = "办件信息") @Valid @RequestBody RecordEntity entity) {
         recordService.save(entity);
         return Result.success();
     }
@@ -56,7 +56,7 @@ public class RecordController {
     @Operation(summary = "更新")
     @Log(module = "统一受理", action = "更新办件")
     @PutMapping
-    public Result<Void> update(@Valid @RequestBody RecordEntity entity) {
+    public Result<Void> update(@Parameter(description = "办件信息") @Valid @RequestBody RecordEntity entity) {
         RecordEntity exist = recordService.getById(entity.getId());
         if (exist == null || exist.getDeleted() == 1) {
             return Result.notFound("数据不存在");

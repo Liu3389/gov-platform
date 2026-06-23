@@ -48,7 +48,7 @@ public class ApiController {
     @Operation(summary = "新增")
     @Log(module = "数据共享", action = "新增接口")
     @PostMapping
-    public Result<Void> add(@Valid @RequestBody ApiEntity entity) {
+    public Result<Void> add(@Parameter(description = "共享接口信息") @Valid @RequestBody ApiEntity entity) {
         apiService.save(entity);
         return Result.success();
     }
@@ -56,7 +56,7 @@ public class ApiController {
     @Operation(summary = "更新")
     @Log(module = "数据共享", action = "更新接口")
     @PutMapping
-    public Result<Void> update(@Valid @RequestBody ApiEntity entity) {
+    public Result<Void> update(@Parameter(description = "共享接口信息") @Valid @RequestBody ApiEntity entity) {
         ApiEntity exist = apiService.getById(entity.getId());
         if (exist == null || exist.getDeleted() == 1) {
             return Result.notFound("数据不存在");

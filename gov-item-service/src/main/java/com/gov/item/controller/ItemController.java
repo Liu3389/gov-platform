@@ -48,7 +48,7 @@ public class ItemController {
     @Operation(summary = "新增")
     @Log(module = "事项管理", action = "新增事项")
     @PostMapping
-    public Result<Void> add(@Valid @RequestBody ItemEntity entity) {
+    public Result<Void> add(@Parameter(description = "事项信息") @Valid @RequestBody ItemEntity entity) {
         itemService.save(entity);
         return Result.success();
     }
@@ -56,7 +56,7 @@ public class ItemController {
     @Operation(summary = "更新")
     @Log(module = "事项管理", action = "更新事项")
     @PutMapping
-    public Result<Void> update(@Valid @RequestBody ItemEntity entity) {
+    public Result<Void> update(@Parameter(description = "事项信息") @Valid @RequestBody ItemEntity entity) {
         ItemEntity exist = itemService.getById(entity.getId());
         if (exist == null || exist.getDeleted() == 1) {
             return Result.notFound("数据不存在");

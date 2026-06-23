@@ -13,6 +13,6 @@ public class MessageFeignFallbackFactory implements FallbackFactory<MessageFeign
     @Override
     public MessageFeignClient create(Throwable cause) {
         log.error("[Feign] 调用 gov-message-service 失败", cause);
-        return dto -> SentinelBlockHandler.blockHandler("message-service", "send");
+        return dto -> SentinelBlockHandler.<Void>blockHandler("message-service", "send");
     }
 }

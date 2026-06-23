@@ -49,12 +49,13 @@ public class LogController {
     @Operation(summary = "新增操作日志（管理端手动录入）")
     @Log(module = "操作日志", action = "新增日志")
     @PostMapping
-    public Result<Void> add(@Valid @RequestBody LogEntity entity) {
+    public Result<Void> add(@Parameter(description = "日志信息") @Valid @RequestBody LogEntity entity) {
         logService.save(entity);
         return Result.success();
     }
 
     @Operation(summary = "删除操作日志")
+    @Log(module = "操作日志", action = "删除日志")
     @DeleteMapping("/{id}")
     public Result<Void> delete(@Parameter(description = "ID") @PathVariable Long id) {
         LogEntity entity = logService.getById(id);
@@ -74,7 +75,7 @@ public class LogController {
      * 仅用于服务间内部通信。</p>
      */
     @PostMapping("/log/record")
-    public Result<Void> record(@RequestBody OperateLogEvent event) {
+    public Result<Void> record(@Parameter(description = "操作日志事件") @RequestBody OperateLogEvent event) {
         LogEntity entity = new LogEntity();
         entity.setUserId(event.getUserId());
         entity.setUserName(event.getUserName());

@@ -48,7 +48,7 @@ public class LicenseController {
     @Operation(summary = "新增")
     @Log(module = "电子证照", action = "新增证照")
     @PostMapping
-    public Result<Void> add(@Valid @RequestBody LicenseEntity entity) {
+    public Result<Void> add(@Parameter(description = "证照信息") @Valid @RequestBody LicenseEntity entity) {
         licenseService.save(entity);
         return Result.success();
     }
@@ -56,7 +56,7 @@ public class LicenseController {
     @Operation(summary = "更新")
     @Log(module = "电子证照", action = "更新证照")
     @PutMapping
-    public Result<Void> update(@Valid @RequestBody LicenseEntity entity) {
+    public Result<Void> update(@Parameter(description = "证照信息") @Valid @RequestBody LicenseEntity entity) {
         LicenseEntity exist = licenseService.getById(entity.getId());
         if (exist == null || exist.getDeleted() == 1) {
             return Result.notFound("数据不存在");

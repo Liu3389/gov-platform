@@ -48,7 +48,7 @@ public class WorkflowTaskController {
     @Operation(summary = "新增")
     @Log(module = "工作流管理", action = "新增任务")
     @PostMapping
-    public Result<Void> add(@Valid @RequestBody WorkflowTaskEntity entity) {
+    public Result<Void> add(@Parameter(description = "工作流任务信息") @Valid @RequestBody WorkflowTaskEntity entity) {
         workflowTaskService.save(entity);
         return Result.success();
     }
@@ -56,7 +56,7 @@ public class WorkflowTaskController {
     @Operation(summary = "更新")
     @Log(module = "工作流管理", action = "更新任务")
     @PutMapping
-    public Result<Void> update(@Valid @RequestBody WorkflowTaskEntity entity) {
+    public Result<Void> update(@Parameter(description = "工作流任务信息") @Valid @RequestBody WorkflowTaskEntity entity) {
         WorkflowTaskEntity exist = workflowTaskService.getById(entity.getId());
         if (exist == null || exist.getDeleted() == 1) {
             return Result.notFound("数据不存在");

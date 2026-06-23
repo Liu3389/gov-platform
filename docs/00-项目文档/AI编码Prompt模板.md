@@ -2,6 +2,8 @@
 
 > 本规范适用于全体成员使用 AI（大模型、Copilot、Trae 等）辅助开发。AI 是工具，最终代码责任由开发者本人承担。
 
+> **重要提示**：使用 AI 编码时，除了本文档的模板，还必须读取 `.trae/rules/tasks/` 目录下对应的子规则文件（如 `controller.md`、`service.md`、`entity.md` 等），确保生成的代码符合项目编码规范。
+
 ---
 
 ## 一、AI 使用原则
@@ -33,7 +35,7 @@
 2. 密码使用 BCrypt 加密存储
 3. 返回统一响应体 Result<T>
 4. 手机号需要防刷（60 秒内只能发一次）
-5. Controller 必须加 Knife4j 注解（@ApiOperation、@ApiImplicitParam）
+5. Controller 必须加 Knife4j 注解（@Operation、@Parameter）
 6. Service 写操作加 @Transactional
 7. 不写死任何常量，使用 Hutool 工具类
 【示例】
@@ -101,7 +103,7 @@
 |--------|------|
 | 编译通过 | `mvn clean compile` 无错误 |
 | 单元测试 | 关键 Service 有单元测试 |
-| Knife4j 文档 | Controller 加 `@ApiOperation`、参数说明、示例值 |
+| Knife4j 文档 | Controller 加 `@Operation`、参数说明、示例值 |
 | 命名规范 | 类名大驼峰、方法名小驼峰、常量全大写下划线 |
 | SQL 安全 | 禁止字符串拼接 SQL，必须参数化 |
 | 空指针 | 对可能为 null 的入参/返回值做防御 |

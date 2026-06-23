@@ -48,7 +48,7 @@ public class TemplateController {
     @Operation(summary = "新增")
     @Log(module = "消息通知", action = "新增模板")
     @PostMapping
-    public Result<Void> add(@Valid @RequestBody TemplateEntity entity) {
+    public Result<Void> add(@Parameter(description = "模板信息") @Valid @RequestBody TemplateEntity entity) {
         templateService.save(entity);
         return Result.success();
     }
@@ -56,7 +56,7 @@ public class TemplateController {
     @Operation(summary = "更新")
     @Log(module = "消息通知", action = "更新模板")
     @PutMapping
-    public Result<Void> update(@Valid @RequestBody TemplateEntity entity) {
+    public Result<Void> update(@Parameter(description = "模板信息") @Valid @RequestBody TemplateEntity entity) {
         TemplateEntity exist = templateService.getById(entity.getId());
         if (exist == null || exist.getDeleted() == 1) {
             return Result.notFound("数据不存在");

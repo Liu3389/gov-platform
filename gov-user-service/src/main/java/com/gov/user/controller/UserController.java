@@ -58,7 +58,7 @@ public class UserController {
     @Operation(summary = "新增用户")
     @Log(module = "用户管理", action = "新增用户")
     @PostMapping
-    public Result<Void> add(@Valid @RequestBody UserEntity user) {
+    public Result<Void> add(@Parameter(description = "用户信息") @Valid @RequestBody UserEntity user) {
         // 检查用户名是否已存在
         if (userService.getByUsername(user.getUsername()) != null) {
             return Result.fail("用户名已存在");
@@ -70,7 +70,7 @@ public class UserController {
     @Operation(summary = "更新用户")
     @Log(module = "用户管理", action = "更新用户")
     @PutMapping
-    public Result<Void> update(@Valid @RequestBody UserEntity user) {
+    public Result<Void> update(@Parameter(description = "用户信息") @Valid @RequestBody UserEntity user) {
         UserEntity exist = userService.getById(user.getId());
         if (exist == null || exist.getDeleted() == 1) {
             return Result.notFound("用户不存在");
