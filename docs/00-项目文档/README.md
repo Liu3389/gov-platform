@@ -50,7 +50,7 @@
 
 | 服务                    | 端口   | 数据库            | Redis db | 负责人     |
 | --------------------- | ---- | -------------- | -------- | ------- |
-| gov-gateway           | 8080 | —              | —        | 组长      |
+| gov-gateway           | 8091 | —              | —        | 组长      |
 | gov-user-service      | 8081 | gov\_user      | 1        | 组员A     |
 | gov-item-service      | 8092 | gov\_item      | 2        | 组员A     |
 | gov-reception-service | 8083 | gov\_reception | 3        | 组员B     |
@@ -91,7 +91,7 @@
 
 | 地址                               | 说明                               |
 | -------------------------------- | -------------------------------- |
-| `http://localhost:8080/doc.html` | 网关聚合 Knife4j 文档                  |
+| `http://localhost:8091/doc.html` | 网关聚合 Knife4j 文档                  |
 | `http://localhost:8081/doc.html` | gov-user-service 单服务文档           |
 | `http://localhost:8848/nacos`    | Nacos 控制台（用户名/密码：nacos/nacos）    |
 | `http://localhost:15672`         | RabbitMQ 控制台（用户名/密码：guest/guest） |
@@ -138,7 +138,7 @@
 
 | 检查项     | 状态 | 说明                                               |
 | ------- | -- | ------------------------------------------------ |
-| 端口规划一致  | ✅  | 所有文档端口规划一致（8080\~8090）                           |
+| 端口规划一致  | ✅  | 所有文档端口规划一致（8081\~8092）                           |
 | 数据库名一致  | ✅  | 所有文档数据库名一致（gov\_user\~gov\_monitor）              |
 | 服务名一致   | ✅  | 所有文档服务名一致（gov-user-service\~gov-monitor-service） |
 | 技术栈版本一致 | ✅  | 所有文档技术栈版本一致（SpringBoot 2.7.18 等）                 |

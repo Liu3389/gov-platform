@@ -119,7 +119,7 @@
 
 ```text
 【环境】SpringBoot 2.7.18 + SpringCloud 2021.0.8 + SpringCloud Alibaba 2021.0.5.0 + SpringCloud Gateway 3.1.x + Nacos 2.2.3 + Knife4j 4.4.0
-【本地测试地址】http://localhost:8080/doc.html
+【本地测试地址】http://localhost:8091/doc.html
 【接口】POST /api/v1/auth/login
 【请求参数】
 {
