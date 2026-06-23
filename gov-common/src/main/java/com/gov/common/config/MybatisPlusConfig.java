@@ -7,7 +7,10 @@ import com.baomidou.mybatisplus.extension.plugins.inner.PaginationInnerIntercept
 import org.apache.ibatis.reflection.MetaObject;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
+import javax.servlet.http.HttpServletRequest;
 import java.time.LocalDateTime;
 
 /**
@@ -22,7 +25,6 @@ public class MybatisPlusConfig {
     @Bean
     public MybatisPlusInterceptor mybatisPlusInterceptor() {
         MybatisPlusInterceptor interceptor = new MybatisPlusInterceptor();
-        // 分页插件（指定数据库类型为 MySQL）
         interceptor.addInnerInterceptor(new PaginationInnerInterceptor(DbType.MYSQL));
         return interceptor;
     }
@@ -38,13 +40,35 @@ public class MybatisPlusConfig {
             public void insertFill(MetaObject metaObject) {
                 this.strictInsertFill(metaObject, "createTime", LocalDateTime.class, LocalDateTime.now());
                 this.strictInsertFill(metaObject, "updateTime", LocalDateTime.class, LocalDateTime.now());
-                // createBy 和 updateBy 需要从上下文获取当前用户ID，这里暂时不填充
-                // 实际项目中应该从 SecurityContext 或 Token 中获取
+                Long userId = getCurrentUserId();
+                if (userId != null) {
+                    this.strictInsertFill(metaObject, "createBy", Long.class, userId);
+                    this.strictInsertFill(metaObject, "updateBy", Long.class, userId);
+                }
             }
 
             @Override
             public void updateFill(MetaObject metaObject) {
                 this.strictUpdateFill(metaObject, "updateTime", LocalDateTime.class, LocalDateTime.now());
+                Long userId = getCurrentUserId();
+                if (userId != null) {
+                    this.strictUpdateFill(metaObject, "updateBy", Long.class, userId);
+                }
+            }
+
+            private Long getCurrentUserId() {
+                try {
+                    ServletRequestAttributes attributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
+                    if (attributes != null) {
+                        HttpServletRequest request = attributes.getRequest();
+                        String userId = request.getHeader("X-User-Id");
+                        if (userId != null && !userId.isEmpty()) {
+                            return Long.valueOf(userId);
+                        }
+                    }
+                } catch (Exception ignored) {
+                }
+                return null;
             }
         };
     }

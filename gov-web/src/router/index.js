@@ -1,8 +1,5 @@
-import Vue from 'vue'
-import VueRouter from 'vue-router'
-import store from '@/store'
-
-Vue.use(VueRouter)
+import { createRouter, createWebHashHistory } from 'vue-router'
+import { useUserStore } from '@/store/user'
 
 const routes = [
   {
@@ -15,37 +12,37 @@ const routes = [
     path: '/dashboard',
     name: 'Dashboard',
     component: () => import('@/views/dashboard/index.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, title: '首页' }
   },
   {
     path: '/item',
     name: 'Item',
     component: () => import('@/views/item/index.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, title: '事项管理' }
   },
   {
     path: '/case',
     name: 'Case',
     component: () => import('@/views/case/index.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, title: '办件管理' }
   },
   {
     path: '/license',
     name: 'License',
     component: () => import('@/views/license/index.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, title: '证照管理' }
   },
   {
     path: '/complaint',
     name: 'Complaint',
     component: () => import('@/views/complaint/index.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, title: '投诉建议' }
   },
   {
     path: '/open',
     name: 'Open',
     component: () => import('@/views/open/index.vue'),
-    meta: { requiresAuth: true }
+    meta: { requiresAuth: true, title: '政务公开' }
   },
   {
     path: '/',
@@ -53,14 +50,14 @@ const routes = [
   }
 ]
 
-const router = new VueRouter({
-  mode: 'hash',
+const router = createRouter({
+  history: createWebHashHistory(),
   routes
 })
 
-// 导航守卫：检查 token
 router.beforeEach((to, from, next) => {
-  const token = store.state.token
+  const userStore = useUserStore()
+  const token = userStore.token
   if (to.meta.requiresAuth !== false && !token) {
     next('/login')
   } else if (to.path === '/login' && token) {

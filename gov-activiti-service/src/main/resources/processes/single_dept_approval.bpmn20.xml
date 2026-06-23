@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions
+    xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+    xmlns:activiti="http://activiti.org/bpmn"
+    xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI"
+    xmlns:dc="http://www.omg.org/spec/DD/20100524/DC"
+    xmlns:di="http://www.omg.org/spec/DD/20100524/DI"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    targetNamespace="http://www.activiti.org/test">
+
+  <!-- 单部门审批流程 v1 -->
+  <process id="single_dept_approval" name="单部门审批流程" isExecutable="true">
+
+    <startEvent id="startEvent1" name="开始" />
+
+    <userTask id="task_apply" name="填写申请"
+        activiti:assignee="${applyUserId}"
+        activiti:formKey="${formKey}" />
+
+    <userTask id="task_dept_approve" name="部门审批"
+        activiti:candidateGroups="dept_approver"
+        activiti:dueDate="${dueDate}" />
+
+    <exclusiveGateway id="gateway_approve" name="审批结果" />
+
+    <userTask id="task_complete" name="办结"
+        activiti:assignee="${applyUserId}" />
+
+    <userTask id="task_reject" name="退回修改"
+        activiti:assignee="${applyUserId}" />
+
+    <endEvent id="endEvent1" name="结束" />
+
+    <sequenceFlow id="flow1" sourceRef="startEvent1" targetRef="task_apply" />
+    <sequenceFlow id="flow2" sourceRef="task_apply" targetRef="task_dept_approve" />
+    <sequenceFlow id="flow3" sourceRef="task_dept_approve" targetRef="gateway_approve" />
+    <sequenceFlow id="flow4" sourceRef="gateway_approve" targetRef="task_complete">
+      <conditionExpression xsi:type="tFormalExpression">${approvalResult == 1}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow5" sourceRef="gateway_approve" targetRef="task_reject">
+      <conditionExpression xsi:type="tFormalExpression">${approvalResult == 2}</conditionExpression>
+    </sequenceFlow>
+    <sequenceFlow id="flow6" sourceRef="task_complete" targetRef="endEvent1" />
+    <sequenceFlow id="flow7" sourceRef="task_reject" targetRef="task_apply" />
+
+  </process>
+
+</definitions>

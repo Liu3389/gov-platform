@@ -3,17 +3,17 @@
     <el-card class="login-card">
       <h2 class="login-title">智慧政务一体化便民服务平台</h2>
       <el-form
-        ref="loginForm"
+        ref="loginFormRef"
         :model="form"
         :rules="rules"
         label-width="0"
-        @keyup.enter.native="handleLogin"
+        @keyup.enter="handleLogin"
       >
         <el-form-item prop="username">
           <el-input
             v-model="form.username"
             placeholder="请输入用户名"
-            prefix-icon="el-icon-user"
+            :prefix-icon="User"
           />
         </el-form-item>
         <el-form-item prop="password">
@@ -21,7 +21,7 @@
             v-model="form.password"
             type="password"
             placeholder="请输入密码"
-            prefix-icon="el-icon-lock"
+            :prefix-icon="Lock"
           />
         </el-form-item>
         <el-form-item>
@@ -39,48 +39,53 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'Login',
-  data() {
-    return {
-      form: {
-        username: '',
-        password: ''
-      },
-      rules: {
-        username: [
-          { required: true, message: '请输入用户名', trigger: 'blur' }
-        ],
-        password: [
-          { required: true, message: '请输入密码', trigger: 'blur' },
-          { min: 4, message: '密码长度不能少于4位', trigger: 'blur' }
-        ]
-      },
-      loading: false
-    }
-  },
-  methods: {
-    handleLogin() {
-      this.$refs.loginForm.validate(async valid => {
-        if (!valid) return
-        this.loading = true
-        try {
-          await this.$store.dispatch('login', {
-            username: this.form.username,
-            password: this.form.password
-          })
-          await this.$store.dispatch('getUserInfo')
-          this.$router.push('/dashboard')
-          this.$message.success('登录成功')
-        } catch (error) {
-          this.$message.error(error.message || '登录失败')
-        } finally {
-          this.loading = false
-        }
+<script setup>
+import { ref, reactive } from 'vue'
+import { useRouter } from 'vue-router'
+import { ElMessage } from 'element-plus'
+import { User, Lock } from '@element-plus/icons-vue'
+import { useUserStore } from '@/store/user'
+
+const router = useRouter()
+const userStore = useUserStore()
+
+const loginFormRef = ref(null)
+const loading = ref(false)
+
+const form = reactive({
+  username: '',
+  password: ''
+})
+
+const rules = {
+  username: [
+    { required: true, message: '请输入用户名', trigger: 'blur' }
+  ],
+  password: [
+    { required: true, message: '请输入密码', trigger: 'blur' },
+    { min: 4, message: '密码长度不能少于4位', trigger: 'blur' }
+  ]
+}
+
+const handleLogin = async () => {
+  if (!loginFormRef.value) return
+  await loginFormRef.value.validate(async (valid) => {
+    if (!valid) return
+    loading.value = true
+    try {
+      await userStore.login({
+        username: form.username,
+        password: form.password
       })
+      await userStore.getUserInfo()
+      router.push('/dashboard')
+      ElMessage.success('登录成功')
+    } catch (error) {
+      ElMessage.error(error.message || '登录失败')
+    } finally {
+      loading.value = false
     }
-  }
+  })
 }
 </script>
 

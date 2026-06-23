@@ -13,9 +13,9 @@ gov-platform/
 │   └── nginx/nginx.conf      ← Nginx 配置
 ├── gov-platform-parent/      ← 父工程（版本锁定）
 ├── gov-common/               ← 公共模块
-├── gov-gateway/              ← 网关服务（8080）
+├── gov-gateway/              ← 网关服务（8091）    
 ├── gov-user-service/         ← 用户认证服务（8081）【模板】
-├── gov-item-service/         ← 事项管理服务（8082）
+├── gov-item-service/         ← 事项管理服务（8092）
 ├── gov-reception-service/    ← 统一受理服务（8083）
 ├── gov-activiti-service/     ← 审批流转服务（8084）【核心】
 ├── gov-license-service/      ← 电子证照服务（8085）
@@ -52,7 +52,7 @@ docker-compose ps
 
 在 IDEA 中按顺序启动：
 
-1. `gov-gateway`（8080）
+1. `gov-gateway`（8091）
 2. `gov-user-service`（8081）
 3. 其他业务服务
 
@@ -80,7 +80,7 @@ docker-compose ps
 | 角色 | 负责服务 | 端口 |
 |------|----------|------|
 | 组长 | gov-gateway、gov-monitor、gov-common、父工程 | 8080、8090 |
-| 组员A | gov-user-service、gov-item-service | 8081、8082 |
+| 组员A | gov-user-service、gov-item-service | 8081、8092 |
 | 组员B | gov-reception-service、gov-activiti-service | 8083、8084 |
 | 组员C | gov-license-service、gov-complaint-service | 8085、8086 |
 | 组员D | gov-open-service、gov-datashare-service | 8087、8088 |

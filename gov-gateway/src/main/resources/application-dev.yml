@@ -1,27 +1,95 @@
 server:
-  port: 8080
+  port: 8091
 
 spring:
   application:
     name: gov-gateway
+  config:
+    import: "optional:nacos:gov-platform-common.yaml?group=DEFAULT_GROUP"
   cloud:
     nacos:
       discovery:
         server-addr: localhost:8848
-        namespace: gov-platform
         group: DEFAULT_GROUP
+        namespace: gov-platform
+        username: nacos
+        password: nacos
       config:
         server-addr: localhost:8848
-        namespace: gov-platform
         group: DEFAULT_GROUP
+        namespace: gov-platform
         file-extension: yaml
+        username: nacos
+        password: nacos
     gateway:
       discovery:
         locator:
           enabled: true
           lower-case-service-id: true
       routes:
-        # ==================== 用户认证服务 ====================
+        # ==================== Knife4j 文档路由（RewritePath，必须在业务路由之前） ====================
+        - id: knife4j-user-docs
+          uri: lb://gov-user-service
+          predicates:
+            - Path=/user/v3/api-docs/**
+          filters:
+            - RewritePath=/user/(?<remaining>.*), /$\{remaining}
+        - id: knife4j-item-docs
+          uri: lb://gov-item-service
+          predicates:
+            - Path=/item/v3/api-docs/**
+          filters:
+            - RewritePath=/item/(?<remaining>.*), /$\{remaining}
+        - id: knife4j-reception-docs
+          uri: lb://gov-reception-service
+          predicates:
+            - Path=/reception/v3/api-docs/**
+          filters:
+            - RewritePath=/reception/(?<remaining>.*), /$\{remaining}
+        - id: knife4j-workflow-docs
+          uri: lb://gov-activiti-service
+          predicates:
+            - Path=/workflow/v3/api-docs/**
+          filters:
+            - RewritePath=/workflow/(?<remaining>.*), /$\{remaining}
+        - id: knife4j-license-docs
+          uri: lb://gov-license-service
+          predicates:
+            - Path=/license/v3/api-docs/**
+          filters:
+            - RewritePath=/license/(?<remaining>.*), /$\{remaining}
+        - id: knife4j-complaint-docs
+          uri: lb://gov-complaint-service
+          predicates:
+            - Path=/complaint/v3/api-docs/**
+          filters:
+            - RewritePath=/complaint/(?<remaining>.*), /$\{remaining}
+        - id: knife4j-open-docs
+          uri: lb://gov-open-service
+          predicates:
+            - Path=/open/v3/api-docs/**
+          filters:
+            - RewritePath=/open/(?<remaining>.*), /$\{remaining}
+        - id: knife4j-share-docs
+          uri: lb://gov-datashare-service
+          predicates:
+            - Path=/share/v3/api-docs/**
+          filters:
+            - RewritePath=/share/(?<remaining>.*), /$\{remaining}
+        - id: knife4j-message-docs
+          uri: lb://gov-message-service
+          predicates:
+            - Path=/message/v3/api-docs/**
+          filters:
+            - RewritePath=/message/(?<remaining>.*), /$\{remaining}
+        - id: knife4j-monitor-docs
+          uri: lb://gov-monitor-service
+          predicates:
+            - Path=/monitor/v3/api-docs/**
+          filters:
+            - RewritePath=/monitor/(?<remaining>.*), /$\{remaining}
+
+        # ==================== 业务路由 ====================
         - id: gov-user-service
           uri: lb://gov-user-service
           predicates:
@@ -29,7 +97,6 @@ spring:
           filters:
             - StripPrefix=2
 
-        # ==================== 事项管理服务 ====================
         - id: gov-item-service
           uri: lb://gov-item-service
           predicates:
@@ -37,7 +104,6 @@ spring:
           filters:
             - StripPrefix=2
 
-        # ==================== 统一受理服务 ====================
         - id: gov-reception-service
           uri: lb://gov-reception-service
           predicates:
@@ -45,7 +111,6 @@ spring:
           filters:
             - StripPrefix=2
 
-        # ==================== 审批流转服务 ====================
         - id: gov-activiti-service
           uri: lb://gov-activiti-service
           predicates:
@@ -53,7 +118,6 @@ spring:
           filters:
             - StripPrefix=2
 
-        # ==================== 电子证照服务 ====================
         - id: gov-license-service
           uri: lb://gov-license-service
           predicates:
@@ -61,7 +125,6 @@ spring:
           filters:
             - StripPrefix=2
 
-        # ==================== 投诉建议服务 ====================
         - id: gov-complaint-service
           uri: lb://gov-complaint-service
           predicates:
@@ -69,7 +132,6 @@ spring:
           filters:
             - StripPrefix=2
 
-        # ==================== 政务公开服务 ====================
         - id: gov-open-service
           uri: lb://gov-open-service
           predicates:
@@ -77,7 +139,6 @@ spring:
           filters:
             - StripPrefix=2
 
-        # ==================== 数据共享服务 ====================
         - id: gov-datashare-service
           uri: lb://gov-datashare-service
           predicates:
@@ -85,7 +146,6 @@ spring:
           filters:
             - StripPrefix=2
 
-        # ==================== 消息通知服务 ====================
         - id: gov-message-service
           uri: lb://gov-message-service
           predicates:
@@ -93,7 +153,6 @@ spring:
           filters:
             - StripPrefix=2
 
-        # ==================== 监察审计服务 ====================
         - id: gov-monitor-service
           uri: lb://gov-monitor-service
           predicates:
@@ -102,16 +161,65 @@ spring:
             - StripPrefix=2
 
 # ==================== Knife4j 网关聚合配置 ====================
+
 knife4j:
   gateway:
     enabled: true
-    strategy: discover
-    discover:
-      enabled: true
-      version: openapi3
+    strategy: manual
+    routes:
+      - name: 用户认证服务
+        serviceName: gov-user-service
+        url: /user/v3/api-docs
+        context-path: /api/v1/user
+        order: 1
+      - name: 事项管理服务
+        serviceName: gov-item-service
+        url: /item/v3/api-docs
+        context-path: /api/v1/item
+        order: 2
+      - name: 统一受理服务
+        serviceName: gov-reception-service
+        url: /reception/v3/api-docs
+        context-path: /api/v1/reception
+        order: 3
+      - name: 审批流转服务
+        serviceName: gov-activiti-service
+        url: /workflow/v3/api-docs
+        context-path: /api/v1/workflow
+        order: 4
+      - name: 电子证照服务
+        serviceName: gov-license-service
+        url: /license/v3/api-docs
+        context-path: /api/v1/license
+        order: 5
+      - name: 投诉建议服务
+        serviceName: gov-complaint-service
+        url: /complaint/v3/api-docs
+        context-path: /api/v1/complaint
+        order: 6
+      - name: 政务公开服务
+        serviceName: gov-open-service
+        url: /open/v3/api-docs
+        context-path: /api/v1/open
+        order: 7
+      - name: 数据共享服务
+        serviceName: gov-datashare-service
+        url: /share/v3/api-docs
+        context-path: /api/v1/share
+        order: 8
+      - name: 消息通知服务
+        serviceName: gov-message-service
+        url: /message/v3/api-docs
+        context-path: /api/v1/message
+        order: 9
+      - name: 监察审计服务
+        serviceName: gov-monitor-service
+        url: /monitor/v3/api-docs
+        context-path: /api/v1/monitor
+        order: 10
 
 # ==================== 日志配置 ====================
 logging:
   level:
-    com.gov.gateway: debug
-    org.springframework.cloud.gateway: debug
+    com.gov.gateway: warn
+    org.springframework.cloud.gateway: warn

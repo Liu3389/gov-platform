@@ -15,7 +15,7 @@ public class GatewayApplication {
         SpringApplication.run(GatewayApplication.class, args);
         System.out.println("==========================================");
         System.out.println("        网关服务启动成功！");
-        System.out.println("  Knife4j 文档地址：http://localhost:8080/doc.html");
+        System.out.println("  Knife4j 文档地址：http://localhost:8091/doc.html");
         System.out.println("==========================================");
     }
 }

@@ -14,18 +14,18 @@
 
     <!-- 子模块列表 -->
     <modules>
-        <module>gov-common</module>
-        <module>gov-gateway</module>
-        <module>gov-user-service</module>
-        <module>gov-item-service</module>
-        <module>gov-reception-service</module>
-        <module>gov-activiti-service</module>
-        <module>gov-license-service</module>
-        <module>gov-complaint-service</module>
-        <module>gov-open-service</module>
-        <module>gov-datashare-service</module>
-        <module>gov-message-service</module>
-        <module>gov-monitor-service</module>
+        <module>../gov-common</module>
+        <module>../gov-gateway</module>
+        <module>../gov-user-service</module>
+        <module>../gov-item-service</module>
+        <module>../gov-reception-service</module>
+        <module>../gov-activiti-service</module>
+        <module>../gov-license-service</module>
+        <module>../gov-complaint-service</module>
+        <module>../gov-open-service</module>
+        <module>../gov-datashare-service</module>
+        <module>../gov-message-service</module>
+        <module>../gov-monitor-service</module>
     </modules>
 
     <!-- 版本统一管理 -->
@@ -46,6 +46,8 @@
 
         <!-- 持久层 -->
         <mybatis-plus.version>3.5.5</mybatis-plus.version>
+        <mybatis.version>3.5.15</mybatis.version>
+        <mybatis-spring.version>2.1.2</mybatis-spring.version>
         <druid.version>1.2.20</druid.version>
         <mysql.version>8.0.33</mysql.version>
 
@@ -53,7 +55,10 @@
         <!-- Redis 随 SpringBoot 版本 -->
 
         <!-- 工作流 -->
-        <activiti.version>7.7.0</activiti.version>
+        <activiti.version>7.1.0.M6</activiti.version>
+
+        <!-- 熔断限流 -->
+        <sentinel.version>2021.0.5.0</sentinel.version>
 
         <!-- 接口文档 -->
         <knife4j.version>4.4.0</knife4j.version>
@@ -112,11 +117,35 @@
                 <scope>import</scope>
             </dependency>
 
+            <!-- ==================== Sentinel ==================== -->
+            <dependency>
+                <groupId>com.alibaba.cloud</groupId>
+                <artifactId>spring-cloud-starter-alibaba-sentinel</artifactId>
+                <version>${sentinel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.alibaba.csp</groupId>
+                <artifactId>sentinel-datasource-nacos</artifactId>
+                <version>1.8.6</version>
+            </dependency>
+
             <!-- ==================== MyBatis-Plus ==================== -->
             <dependency>
                 <groupId>com.baomidou</groupId>
                 <artifactId>mybatis-plus-boot-starter</artifactId>
                 <version>${mybatis-plus.version}</version>
+            </dependency>
+
+            <!-- MyBatis 版本锁定（防止 Activiti 等依赖引入旧版本） -->
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis</artifactId>
+                <version>${mybatis.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.mybatis</groupId>
+                <artifactId>mybatis-spring</artifactId>
+                <version>${mybatis-spring.version}</version>
             </dependency>
 
             <!-- ==================== Druid 连接池 ==================== -->
@@ -145,6 +174,13 @@
                 <groupId>com.github.xiaoymin</groupId>
                 <artifactId>knife4j-openapi3-spring-boot-starter</artifactId>
                 <version>${knife4j.version}</version>
+            </dependency>
+
+            <!-- SpringDoc OpenAPI 3（Knife4j 4.x 底层依赖） -->
+            <dependency>
+                <groupId>org.springdoc</groupId>
+                <artifactId>springdoc-openapi-ui</artifactId>
+                <version>1.7.0</version>
             </dependency>
 
             <!-- ==================== Hutool 工具类 ==================== -->

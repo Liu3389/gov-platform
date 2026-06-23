@@ -52,7 +52,7 @@
 | --------------------- | ---- | -------------- | -------- | ------- |
 | gov-gateway           | 8080 | —              | —        | 组长      |
 | gov-user-service      | 8081 | gov\_user      | 1        | 组员A     |
-| gov-item-service      | 8082 | gov\_item      | 2        | 组员A     |
+| gov-item-service      | 8092 | gov\_item      | 2        | 组员A     |
 | gov-reception-service | 8083 | gov\_reception | 3        | 组员B     |
 | gov-activiti-service  | 8084 | gov\_activiti  | 4        | 组员B     |
 | gov-license-service   | 8085 | gov\_license   | 5        | 组员C     |

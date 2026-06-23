@@ -30,20 +30,15 @@
   </div>
 </template>
 
-<script>
-export default {
-  name: 'Dashboard',
-  data() {
-    return {
-      stats: {
-        totalItems: 128,
-        pendingTasks: 36,
-        todayCases: 89,
-        licensesIssued: 256
-      }
-    }
-  }
-}
+<script setup>
+import { reactive } from 'vue'
+
+const stats = reactive({
+  totalItems: 128,
+  pendingTasks: 36,
+  todayCases: 89,
+  licensesIssued: 256
+})
 </script>
 
 <style scoped>

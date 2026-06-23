@@ -18,6 +18,29 @@
     <description>网关服务：统一路由、鉴权、签名校验、限流熔断</description>
 
     <dependencies>
+        <!-- ==================== 公共模块 ==================== -->
+        <dependency>
+            <groupId>com.gov</groupId>
+            <artifactId>gov-common</artifactId>
+            <exclusions>
+                <!-- Gateway 使用 WebFlux，排除 spring-boot-starter-web -->
+                <exclusion>
+                    <groupId>org.springframework.boot</groupId>
+                    <artifactId>spring-boot-starter-web</artifactId>
+                </exclusion>
+                <!-- GateWay 不需要 MyBatis-Plus -->
+                <exclusion>
+                    <groupId>com.baomidou</groupId>
+                    <artifactId>mybatis-plus-boot-starter</artifactId>
+                </exclusion>
+                <!-- GateWay 不需要 Knife4j -->
+                <exclusion>
+                    <groupId>com.github.xiaoymin</groupId>
+                    <artifactId>knife4j-openapi3-spring-boot-starter</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
         <!-- ==================== Spring Cloud Gateway ==================== -->
         <dependency>
             <groupId>org.springframework.cloud</groupId>
@@ -46,7 +69,7 @@
         <dependency>
             <groupId>com.github.xiaoymin</groupId>
             <artifactId>knife4j-gateway-spring-boot-starter</artifactId>
-            <version>4.4.0</version>
+            <version>${knife4j.version}</version>
         </dependency>
 
         <!-- ==================== Redis（限流、Token） ==================== -->
@@ -81,6 +104,13 @@
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2</artifactId>
+        </dependency>
+
+        <!-- ==================== Netty macOS 原生 DNS 解析器（M2 芯片） ==================== -->
+        <dependency>
+            <groupId>io.netty</groupId>
+            <artifactId>netty-resolver-dns-native-macos</artifactId>
+            <classifier>osx-aarch_64</classifier>
         </dependency>
     </dependencies>
 

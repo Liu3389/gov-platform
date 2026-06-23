@@ -4,21 +4,38 @@ server:
 spring:
   application:
     name: gov-datashare-service
+  config:
+    import: "optional:nacos:gov-platform-common.yaml?group=DEFAULT_GROUP"
   cloud:
     nacos:
       discovery:
         server-addr: localhost:8848
+        group: DEFAULT_GROUP
         namespace: gov-platform
+        username: nacos
+        password: nacos
       config:
         server-addr: localhost:8848
+        group: DEFAULT_GROUP
         namespace: gov-platform
         file-extension: yaml
+        username: nacos
+        password: nacos
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/gov_datashare?useUnicode=true&characterEncoding=utf8mb4&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://127.0.0.1:3307/gov_datashare?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root
     password: root123456
+    druid:
+      initial-size: 5
+      min-idle: 5
+      max-active: 20
+      max-wait: 60000
+      validation-query: SELECT 1
+      test-while-idle: true
+      test-on-borrow: false
+      test-on-return: false
   redis:
     host: localhost
     port: 6379
@@ -31,6 +48,8 @@ mybatis-plus:
     db-config:
       id-type: assign_id
       logic-delete-field: deleted
+      logic-delete-value: 1
+      logic-not-delete-value: 0
   configuration:
     map-underscore-to-camel-case: true
 
@@ -39,4 +58,4 @@ knife4j:
 
 logging:
   level:
-    com.gov.datashare: debug
+    com.gov.datashare: warn

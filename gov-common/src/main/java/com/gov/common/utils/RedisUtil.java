@@ -1,9 +1,9 @@
 package com.gov.common.utils;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.data.redis.core.*;
 import org.springframework.stereotype.Component;
 
-import javax.annotation.Resource;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 
@@ -12,10 +12,10 @@ import java.util.concurrent.TimeUnit;
  * 封装常用 Redis 操作：String、Hash、List、Set、ZSet、过期时间等
  */
 @Component
+@RequiredArgsConstructor
 public class RedisUtil {
 
-    @Resource
-    private RedisTemplate<String, Object> redisTemplate;
+    private final RedisTemplate<String, Object> redisTemplate;
 
     // ==================== Key 操作 ====================
 

@@ -4,21 +4,27 @@ server:
 spring:
   application:
     name: gov-user-service
+  config:
+    import: "optional:nacos:gov-platform-common.yaml?group=DEFAULT_GROUP"
   cloud:
     nacos:
       discovery:
         server-addr: localhost:8848
-        namespace: gov-platform
         group: DEFAULT_GROUP
+        namespace: gov-platform
+        username: nacos
+        password: nacos
       config:
         server-addr: localhost:8848
-        namespace: gov-platform
         group: DEFAULT_GROUP
+        namespace: gov-platform
         file-extension: yaml
+        username: nacos
+        password: nacos
   datasource:
     type: com.alibaba.druid.pool.DruidDataSource
     driver-class-name: com.mysql.cj.jdbc.Driver
-    url: jdbc:mysql://localhost:3306/gov_user?useUnicode=true&characterEncoding=utf8mb4&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
+    url: jdbc:mysql://127.0.0.1:3307/gov_user?useUnicode=true&characterEncoding=UTF-8&useSSL=false&serverTimezone=Asia/Shanghai&allowPublicKeyRetrieval=true
     username: root
     password: root123456
     druid:
@@ -64,5 +70,5 @@ knife4j:
 # ==================== 日志配置 ====================
 logging:
   level:
-    com.gov.user: debug
-    com.gov.common: debug
+    com.gov.user: warn
+    com.gov.common: warn

@@ -20,7 +20,7 @@ public class ItemApplication {
         SpringApplication.run(ItemApplication.class, args);
         System.out.println("==========================================");
         System.out.println("        事项管理服务启动成功！");
-        System.out.println("  Knife4j 文档地址：http://localhost:8082/doc.html");
+        System.out.println("  Knife4j 文档地址：http://localhost:8092/doc.html");
         System.out.println("==========================================");
     }
 }

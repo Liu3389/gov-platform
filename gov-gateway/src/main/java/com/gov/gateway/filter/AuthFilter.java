@@ -27,8 +27,8 @@ import java.util.List;
 @Component
 public class AuthFilter implements GlobalFilter, Ordered {
 
-    /** 白名单路径（无需鉴权） */
-    private static final List<String> WHITE_LIST = Arrays.asList(
+    /** 白名单路径前缀（无需鉴权） */
+    private static final List<String> WHITE_LIST_PREFIX = Arrays.asList(
         "/api/v1/user/login",
         "/api/v1/user/register",
         "/api/v1/user/captcha",
@@ -37,6 +37,16 @@ public class AuthFilter implements GlobalFilter, Ordered {
         "/doc.html",
         "/webjars",
         "/v3/api-docs",
+        "/user/v3",
+        "/item/v3",
+        "/reception/v3",
+        "/workflow/v3",
+        "/license/v3",
+        "/complaint/v3",
+        "/open/v3",
+        "/share/v3",
+        "/message/v3",
+        "/monitor/v3",
         "/favicon.ico"
     );
 
@@ -47,11 +57,6 @@ public class AuthFilter implements GlobalFilter, Ordered {
 
         // 白名单直接放行
         if (isWhiteList(path)) {
-            return chain.filter(exchange);
-        }
-
-        // Knife4j 文档放行
-        if (path.contains("/doc.html") || path.contains("/webjars") || path.contains("/v3/api-docs")) {
             return chain.filter(exchange);
         }
 
@@ -92,7 +97,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
      * 判断是否为白名单路径
      */
     private boolean isWhiteList(String path) {
-        return WHITE_LIST.stream().anyMatch(path::startsWith);
+        return WHITE_LIST_PREFIX.stream().anyMatch(path::startsWith);
     }
 
     /**

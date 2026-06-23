@@ -144,7 +144,7 @@ public class CryptoUtil {
     /**
      * 生成 SM2 密钥对
      *
-     * @return [0]=私钥, [1]=公钥（均为十六进制）
+     * @return [0]=私钥(Base64), [1]=公钥(Base64)
      */
     public static String[] generateSm2KeyPair() {
         SM2 sm2 = SmUtil.sm2();

@@ -76,3 +76,7 @@ application-local.properties
 *.swp
 *~.nib
 *.orig
+
+# ==================== Local ====================
+.m2/
+txt
