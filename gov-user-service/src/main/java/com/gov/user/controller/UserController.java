@@ -49,10 +49,28 @@ public class UserController {
         return Result.success();
     }
 
-    @Operation(summary = "获取开发用Token（免登录，直接返回admin Token，有效期24小时）")
+    @Operation(summary = "获取开发用Token（免登录，可选角色。默认admin，可选user/none来测试权限拦截）")
     @GetMapping("/dev-token")
-    public Result<String> devToken() {
-        String token = JwtUtil.generateTokenWithRoles(1L, "admin", "ROLE_ADMIN", null, 86400000L);
+    public Result<String> devToken(
+            @Parameter(description = "角色：admin=管理员(默认) | user=普通用户 | none=无角色")
+            @RequestParam(defaultValue = "admin") String role,
+            @Parameter(description = "用户名（默认admin）")
+            @RequestParam(defaultValue = "admin") String username,
+            @Parameter(description = "用户ID（默认1）")
+            @RequestParam(defaultValue = "1") Long userId) {
+        String roles;
+        switch (role) {
+            case "user":
+                roles = "ROLE_USER";
+                break;
+            case "none":
+                roles = "";
+                break;
+            default:
+                roles = "ROLE_ADMIN";
+                break;
+        }
+        String token = JwtUtil.generateTokenWithRoles(userId, username, roles, null, 86400000L);
         return Result.success(token);
     }
 
