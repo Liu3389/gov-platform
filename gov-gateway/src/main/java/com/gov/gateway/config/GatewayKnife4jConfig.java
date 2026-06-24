@@ -7,6 +7,7 @@ import io.swagger.v3.oas.models.security.SecurityRequirement;
 import io.swagger.v3.oas.models.security.SecurityScheme;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 
 /**
  * 网关 Knife4j 聚合文档配置
@@ -27,6 +28,7 @@ import org.springframework.context.annotation.Configuration;
 public class GatewayKnife4jConfig {
 
     @Bean
+    @Primary
     public OpenAPI gatewayOpenAPI() {
         return new OpenAPI()
                 .info(new Info()
