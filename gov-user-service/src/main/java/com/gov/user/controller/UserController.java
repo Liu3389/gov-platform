@@ -5,6 +5,7 @@ import com.gov.common.annotation.RequirePermission;
 import com.gov.common.exception.BusinessException;
 import com.gov.common.result.PageResult;
 import com.gov.common.result.Result;
+import com.gov.common.utils.JwtUtil;
 import com.gov.common.vo.UserVO;
 import com.gov.user.dto.LoginDTO;
 import com.gov.user.dto.RegisterDTO;
@@ -46,6 +47,13 @@ public class UserController {
             @Parameter(description = "注册请求") @Valid @RequestBody RegisterDTO dto) {
         userService.register(dto);
         return Result.success();
+    }
+
+    @Operation(summary = "获取开发用Token（免登录，直接返回admin Token）")
+    @GetMapping("/dev-token")
+    public Result<String> devToken() {
+        String token = JwtUtil.generateTokenWithRoles(1L, "admin", "ROLE_ADMIN", null, 86400000L);
+        return Result.success("Bearer " + token, "Token有效期24小时，在Authorize对话框输入纯Token即可");
     }
 
     // ==================== 查询 ====================
