@@ -18,14 +18,19 @@
 /gov-monitor-service/ @Liu3389
 
 # ========== 成员B：reception + open（请替换 @Liu3389 为成员B的GitHub用户名）==========
-/gov-reception-service/  @Liu3389
-/gov-open-service/       @Liu3389
+/gov-reception-service/  @MarsYet
+/gov-open-service/       @MarsYet
 
 # ========== 成员C：activiti + license（请替换为成员C的GitHub用户名）==========
-/gov-activiti-service/  @Liu3389
-/gov-license-service/   @Liu3389
+/gov-activiti-service/  @fyc848589
+/gov-license-service/   @fyc848589
 
 # ========== 成员D：complaint + datashare + message（请替换为成员D的GitHub用户名）==========
-/gov-complaint-service/ @Liu3389
-/gov-datashare-service/ @Liu3389
-/gov-message-service/   @Liu3389
+/gov-complaint-service/ @wht123
+/gov-datashare-service/ @wht123
+/gov-message-service/   @wht123
+
+# ========== 前端（成员E）：web ==========
+/gov-web/ @Wangde5
+
+
