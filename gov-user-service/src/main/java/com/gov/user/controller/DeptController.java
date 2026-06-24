@@ -1,6 +1,7 @@
 package com.gov.user.controller;
 
 import com.gov.common.annotation.Log;
+import com.gov.common.annotation.RequirePermission;
 import com.gov.common.result.PageResult;
 import com.gov.common.result.Result;
 import com.gov.user.dto.DeptDTO;
@@ -56,6 +57,7 @@ public class DeptController {
 
     @Operation(summary = "新增部门")
     @Log(module = "部门管理", action = "新增部门")
+    @RequirePermission("dept:add")
     @PostMapping
     public Result<Void> add(@Valid @RequestBody DeptDTO dto) {
         deptService.addDept(dto);
@@ -64,6 +66,7 @@ public class DeptController {
 
     @Operation(summary = "修改部门")
     @Log(module = "部门管理", action = "修改部门")
+    @RequirePermission("dept:edit")
     @PutMapping
     public Result<Void> update(@Valid @RequestBody DeptDTO dto) {
         deptService.updateDept(dto);
@@ -72,6 +75,7 @@ public class DeptController {
 
     @Operation(summary = "删除部门")
     @Log(module = "部门管理", action = "删除部门")
+    @RequirePermission("dept:delete")
     @DeleteMapping("/{id}")
     public Result<Void> delete(@Parameter(description = "部门ID") @PathVariable Long id) {
         deptService.deleteDept(id);

@@ -1,6 +1,7 @@
 package com.gov.user.controller;
 
 import com.gov.common.annotation.Log;
+import com.gov.common.annotation.RequirePermission;
 import com.gov.common.exception.BusinessException;
 import com.gov.common.result.PageResult;
 import com.gov.common.result.Result;
@@ -74,6 +75,7 @@ public class UserController {
 
     @Operation(summary = "新增用户（管理端）")
     @Log(module = "用户管理", action = "新增用户")
+    @RequirePermission("user:add")
     @PostMapping
     public Result<Void> add(@Parameter(description = "用户信息") @Valid @RequestBody UserDTO dto) {
         userService.addUser(dto);
@@ -82,6 +84,7 @@ public class UserController {
 
     @Operation(summary = "更新用户")
     @Log(module = "用户管理", action = "更新用户")
+    @RequirePermission("user:edit")
     @PutMapping
     public Result<Void> update(@Parameter(description = "用户信息") @Valid @RequestBody UserDTO dto) {
         userService.updateUser(dto);
@@ -90,6 +93,7 @@ public class UserController {
 
     @Operation(summary = "删除用户（逻辑删除）")
     @Log(module = "用户管理", action = "删除用户")
+    @RequirePermission("user:delete")
     @DeleteMapping("/{id}")
     public Result<Void> delete(@Parameter(description = "用户ID") @PathVariable Long id) {
         userService.deleteUser(id);

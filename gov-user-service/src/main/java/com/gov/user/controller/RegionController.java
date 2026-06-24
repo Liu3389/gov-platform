@@ -1,6 +1,7 @@
 package com.gov.user.controller;
 
 import com.gov.common.annotation.Log;
+import com.gov.common.annotation.RequirePermission;
 import com.gov.common.result.Result;
 import com.gov.user.dto.RegionDTO;
 import com.gov.user.service.RegionService;
@@ -50,6 +51,7 @@ public class RegionController {
 
     @Operation(summary = "新增区划")
     @Log(module = "区划管理", action = "新增区划")
+    @RequirePermission("region:add")
     @PostMapping
     public Result<Void> add(@Valid @RequestBody RegionDTO dto) {
         regionService.addRegion(dto);
@@ -58,6 +60,7 @@ public class RegionController {
 
     @Operation(summary = "修改区划")
     @Log(module = "区划管理", action = "修改区划")
+    @RequirePermission("region:edit")
     @PutMapping
     public Result<Void> update(@Valid @RequestBody RegionDTO dto) {
         regionService.updateRegion(dto);
@@ -66,6 +69,7 @@ public class RegionController {
 
     @Operation(summary = "删除区划")
     @Log(module = "区划管理", action = "删除区划")
+    @RequirePermission("region:delete")
     @DeleteMapping("/{id}")
     public Result<Void> delete(@Parameter(description = "区划ID") @PathVariable Long id) {
         regionService.deleteRegion(id);

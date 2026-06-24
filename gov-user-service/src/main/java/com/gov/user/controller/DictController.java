@@ -1,6 +1,7 @@
 package com.gov.user.controller;
 
 import com.gov.common.annotation.Log;
+import com.gov.common.annotation.RequirePermission;
 import com.gov.common.result.PageResult;
 import com.gov.common.result.Result;
 import com.gov.user.dto.DictDTO;
@@ -50,6 +51,7 @@ public class DictController {
 
     @Operation(summary = "新增字典")
     @Log(module = "字典管理", action = "新增字典")
+    @RequirePermission("dict:add")
     @PostMapping
     public Result<Void> add(@Valid @RequestBody DictDTO dto) {
         dictService.addDict(dto);
@@ -58,6 +60,7 @@ public class DictController {
 
     @Operation(summary = "修改字典")
     @Log(module = "字典管理", action = "修改字典")
+    @RequirePermission("dict:edit")
     @PutMapping
     public Result<Void> update(@Valid @RequestBody DictDTO dto) {
         dictService.updateDict(dto);
@@ -66,6 +69,7 @@ public class DictController {
 
     @Operation(summary = "删除字典")
     @Log(module = "字典管理", action = "删除字典")
+    @RequirePermission("dict:delete")
     @DeleteMapping("/{id}")
     public Result<Void> delete(@Parameter(description = "字典ID") @PathVariable Long id) {
         dictService.deleteDict(id);

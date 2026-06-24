@@ -66,10 +66,10 @@ public class Knife4jConfig {
                 ))
                 .components(new Components()
                         .addSecuritySchemes("BearerAuth", new SecurityScheme()
-                                .type(SecurityScheme.Type.HTTP)
-                                .scheme("bearer")
-                                .bearerFormat("JWT")
-                                .description("输入 JWT Token，格式：Bearer <token>（可从登录接口获取或用 JwtUtil 生成）")))
+                        .type(SecurityScheme.Type.HTTP)
+                        .scheme("bearer")
+                        .bearerFormat("JWT")
+                        .description("输入纯 JWT Token（不含 Bearer 前缀），点击 Authorize 后自动添加到所有请求的 Authorization 头中")))
                 .addSecurityItem(new SecurityRequirement().addList("BearerAuth"));
     }
 }

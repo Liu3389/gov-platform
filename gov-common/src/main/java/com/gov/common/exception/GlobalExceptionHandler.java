@@ -8,6 +8,8 @@ import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
+
+import javax.servlet.http.HttpServletResponse;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ConstraintViolation;
@@ -26,8 +28,12 @@ public class GlobalExceptionHandler {
      * 业务异常
      */
     @ExceptionHandler(BusinessException.class)
-    public Result<Void> handleBusinessException(BusinessException e) {
+    public Result<Void> handleBusinessException(BusinessException e, HttpServletResponse response) {
         log.warn("业务异常：code={}, message={}", e.getCode(), e.getMessage());
+        // 权限不足(403)时设置 HTTP 状态码，让前端/测试脚本可以区分
+        if (e.getCode() == 403) {
+            response.setStatus(HttpServletResponse.SC_FORBIDDEN);
+        }
         return Result.fail(e.getCode(), e.getMessage());
     }
 

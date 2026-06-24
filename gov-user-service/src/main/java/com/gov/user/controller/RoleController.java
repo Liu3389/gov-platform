@@ -1,6 +1,7 @@
 package com.gov.user.controller;
 
 import com.gov.common.annotation.Log;
+import com.gov.common.annotation.RequirePermission;
 import com.gov.common.result.PageResult;
 import com.gov.common.result.Result;
 import com.gov.user.dto.RoleDTO;
@@ -61,6 +62,7 @@ public class RoleController {
 
     @Operation(summary = "新增角色")
     @Log(module = "角色管理", action = "新增角色")
+    @RequirePermission("role:add")
     @PostMapping
     public Result<Void> add(@Valid @RequestBody RoleDTO dto) {
         roleService.addRole(dto);
@@ -69,6 +71,7 @@ public class RoleController {
 
     @Operation(summary = "修改角色")
     @Log(module = "角色管理", action = "修改角色")
+    @RequirePermission("role:edit")
     @PutMapping
     public Result<Void> update(@Valid @RequestBody RoleDTO dto) {
         roleService.updateRole(dto);
@@ -77,6 +80,7 @@ public class RoleController {
 
     @Operation(summary = "删除角色")
     @Log(module = "角色管理", action = "删除角色")
+    @RequirePermission("role:delete")
     @DeleteMapping("/{id}")
     public Result<Void> delete(@Parameter(description = "角色ID") @PathVariable Long id) {
         roleService.deleteRole(id);

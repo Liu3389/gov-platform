@@ -1,6 +1,7 @@
 package com.gov.item.controller;
 
 import com.gov.common.annotation.Log;
+import com.gov.common.annotation.RequirePermission;
 import com.gov.common.result.PageResult;
 import com.gov.common.result.Result;
 import com.gov.item.dto.ItemDTO;
@@ -49,6 +50,7 @@ public class ItemController {
 
     @Operation(summary = "新增事项")
     @Log(module = "事项管理", action = "新增事项")
+    @RequirePermission("item:add")
     @PostMapping
     public Result<Void> add(@Parameter(description = "事项信息") @Valid @RequestBody ItemDTO dto) {
         itemService.addItem(dto);
@@ -57,6 +59,7 @@ public class ItemController {
 
     @Operation(summary = "更新事项")
     @Log(module = "事项管理", action = "更新事项")
+    @RequirePermission("item:edit")
     @PutMapping
     public Result<Void> update(@Parameter(description = "事项信息") @Valid @RequestBody ItemDTO dto) {
         itemService.updateItem(dto);
@@ -65,6 +68,7 @@ public class ItemController {
 
     @Operation(summary = "删除事项（逻辑删除）")
     @Log(module = "事项管理", action = "删除事项")
+    @RequirePermission("item:delete")
     @DeleteMapping("/{id}")
     public Result<Void> delete(@Parameter(description = "事项ID") @PathVariable Long id) {
         itemService.deleteItem(id);

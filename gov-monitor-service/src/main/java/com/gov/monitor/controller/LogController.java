@@ -1,6 +1,7 @@
 package com.gov.monitor.controller;
 
 import com.gov.common.annotation.Log;
+import com.gov.common.annotation.RequirePermission;
 import com.gov.common.event.OperateLogEvent;
 import com.gov.common.result.PageResult;
 import com.gov.common.result.Result;
@@ -42,6 +43,7 @@ public class LogController {
 
     @Operation(summary = "新增操作日志（管理端手动录入）")
     @Log(module = "操作日志", action = "新增日志")
+    @RequirePermission("monitor:add")
     @PostMapping
     public Result<Void> add(@Parameter(description = "日志信息") @Valid @RequestBody LogDTO dto) {
         logService.addLog(dto);
@@ -50,6 +52,7 @@ public class LogController {
 
     @Operation(summary = "删除操作日志")
     @Log(module = "操作日志", action = "删除日志")
+    @RequirePermission("monitor:delete")
     @DeleteMapping("/{id}")
     public Result<Void> delete(@Parameter(description = "ID") @PathVariable Long id) {
         logService.deleteLog(id);

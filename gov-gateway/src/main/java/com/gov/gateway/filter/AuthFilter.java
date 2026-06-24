@@ -93,6 +93,11 @@ public class AuthFilter implements GlobalFilter, Ordered {
             builder.header("X-Dept-Id", String.valueOf(deptId));
         }
 
+        String roles = JwtUtil.getRoles(token);
+        if (roles != null && !roles.isEmpty()) {
+            builder.header("X-Roles", roles);
+        }
+
         ServerHttpRequest finalRequest = builder.build();
 
         return chain.filter(exchange.mutate().request(finalRequest).build());

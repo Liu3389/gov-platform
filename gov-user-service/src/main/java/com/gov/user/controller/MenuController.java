@@ -1,6 +1,7 @@
 package com.gov.user.controller;
 
 import com.gov.common.annotation.Log;
+import com.gov.common.annotation.RequirePermission;
 import com.gov.common.result.Result;
 import com.gov.user.dto.MenuDTO;
 import com.gov.user.service.MenuService;
@@ -48,6 +49,7 @@ public class MenuController {
 
     @Operation(summary = "新增菜单")
     @Log(module = "菜单管理", action = "新增菜单")
+    @RequirePermission("menu:add")
     @PostMapping
     public Result<Void> add(@Valid @RequestBody MenuDTO dto) {
         menuService.addMenu(dto);
@@ -56,6 +58,7 @@ public class MenuController {
 
     @Operation(summary = "修改菜单")
     @Log(module = "菜单管理", action = "修改菜单")
+    @RequirePermission("menu:edit")
     @PutMapping
     public Result<Void> update(@Valid @RequestBody MenuDTO dto) {
         menuService.updateMenu(dto);
@@ -64,6 +67,7 @@ public class MenuController {
 
     @Operation(summary = "删除菜单")
     @Log(module = "菜单管理", action = "删除菜单")
+    @RequirePermission("menu:delete")
     @DeleteMapping("/{id}")
     public Result<Void> delete(@Parameter(description = "菜单ID") @PathVariable Long id) {
         menuService.deleteMenu(id);

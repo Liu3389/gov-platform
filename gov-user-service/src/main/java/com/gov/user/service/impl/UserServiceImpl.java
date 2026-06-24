@@ -14,7 +14,9 @@ import com.gov.user.dto.LoginDTO;
 import com.gov.user.dto.RegisterDTO;
 import com.gov.user.dto.UserDTO;
 import com.gov.user.entity.UserEntity;
+import com.gov.user.entity.UserRoleEntity;
 import com.gov.user.mapper.UserMapper;
+import com.gov.user.mapper.UserRoleMapper;
 import com.gov.user.service.UserService;
 import com.gov.user.vo.LoginVO;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 
 import java.time.LocalDateTime;
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 用户服务实现
@@ -30,6 +34,8 @@ import java.time.LocalDateTime;
 @Service
 @RequiredArgsConstructor
 public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> implements UserService {
+
+    private final UserRoleMapper userRoleMapper;
 
     @Override
     public UserEntity getByUsername(String username) {
@@ -71,7 +77,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, UserEntity> impleme
         if (!BCrypt.checkpw(dto.getPassword(), user.getPassword())) {
             throw new BusinessException(400, "用户名或密码错误");
         }
-        String token = JwtUtil.generateToken(user.getId(), user.getUsername());
+        // 查询用户角色列表
+        String roles = userRoleMapper.selectList(
+                new LambdaQueryWrapper<UserRoleEntity>()
+                        .eq(UserRoleEntity::getUserId, user.getId())
+                        .eq(UserRoleEntity::getDeleted, 0))
+                .stream()
+                .map(ur -> "ROLE_" + ur.getRoleId())
+                .collect(Collectors.joining(","));
+        // admin 用户默认拥有所有权限
+        if ("admin".equals(user.getUsername())) {
+            roles = roles.isEmpty() ? "ROLE_ADMIN" : roles + ",ROLE_ADMIN";
+        }
+        String token = JwtUtil.generateTokenWithRoles(user.getId(), user.getUsername(), roles, null, JwtUtil.DEFAULT_EXPIRE_TIME);
         user.setLastLoginTime(LocalDateTime.now());
         this.updateById(user);
         LoginVO vo = BeanUtil.copyProperties(user, LoginVO.class);

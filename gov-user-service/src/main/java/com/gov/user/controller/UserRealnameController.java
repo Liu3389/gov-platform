@@ -1,6 +1,7 @@
 package com.gov.user.controller;
 
 import com.gov.common.annotation.Log;
+import com.gov.common.annotation.RequirePermission;
 import com.gov.common.result.PageResult;
 import com.gov.common.result.Result;
 import com.gov.user.dto.UserRealnameDTO;
@@ -43,6 +44,7 @@ public class UserRealnameController {
 
     @Operation(summary = "提交实名认证申请")
     @Log(module = "实名认证", action = "提交认证")
+    @RequirePermission("realname:submit")
     @PostMapping("/submit")
     public Result<Void> submit(@Valid @RequestBody UserRealnameDTO dto) {
         userRealnameService.submitRealname(dto);

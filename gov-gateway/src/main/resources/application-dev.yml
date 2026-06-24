@@ -220,10 +220,8 @@ knife4j:
     global-parameter:
       header-parameters:
         - name: Authorization
-          description: "Bearer {token}（粘贴 Bearer 前缀+token）"
+          description: "粘贴 JWT Token（不含 Bearer 前缀，格式如 eyJhbG...）"
           required: false
-          schema:
-            type: string
     routes:
       - name: 用户认证服务
         serviceName: gov-user-service

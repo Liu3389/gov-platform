@@ -1,6 +1,7 @@
 package com.gov.user.controller;
 
 import com.gov.common.annotation.Log;
+import com.gov.common.annotation.RequirePermission;
 import com.gov.common.result.PageResult;
 import com.gov.common.result.Result;
 import com.gov.user.dto.LoginLogDTO;
@@ -42,6 +43,7 @@ public class LoginLogController {
 
     @Operation(summary = "记录登录日志")
     @Log(module = "登录日志", action = "记录登录")
+    @RequirePermission("log:record")
     @PostMapping("/record")
     public Result<Void> record(@Valid @RequestBody LoginLogDTO dto) {
         loginLogService.recordLogin(dto);
