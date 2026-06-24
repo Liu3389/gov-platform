@@ -2,6 +2,7 @@ package com.gov.common.listener;
 
 import com.gov.common.event.OperateLogEvent;
 import com.gov.common.feign.OperateLogFeignClient;
+import com.gov.common.result.Result;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.event.EventListener;
@@ -33,9 +34,15 @@ public class OperateLogEventListener {
     @EventListener
     public void handleOperateLogEvent(OperateLogEvent event) {
         try {
-            operateLogFeignClient.record(event);
-            log.debug("[操作日志] 记录成功: module={}, action={}, user={}",
-                    event.getModule(), event.getAction(), event.getUserName());
+            Result<?> result = operateLogFeignClient.record(event);
+            if (result != null && result.getCode() == Result.SUCCESS_CODE) {
+                log.debug("[操作日志] 记录成功: module={}, action={}, user={}",
+                        event.getModule(), event.getAction(), event.getUserName());
+            } else {
+                log.warn("[操作日志] 记录失败(降级): module={}, action={}, user={}, result={}",
+                        event.getModule(), event.getAction(), event.getUserName(),
+                        result != null ? result.getMessage() : "null");
+            }
         } catch (Exception e) {
             log.error("[操作日志] 落库异常: module={}, action={}", event.getModule(), event.getAction(), e);
         }

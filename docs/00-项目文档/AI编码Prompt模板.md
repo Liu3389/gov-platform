@@ -120,7 +120,7 @@
 ### 4.1 通用模板
 
 ```text
-【环境】SpringBoot 2.7.18 + SpringCloud 2021.0.8 + SpringCloud Alibaba 2021.0.5.0 + SpringCloud Gateway 3.1.x + Nacos 2.2.3 + Knife4j 4.4.0
+【环境】SpringBoot 2.7.18 + SpringCloud 2021.0.8 + SpringCloud Alibaba 2021.0.5.0 + SpringCloud Gateway 3.1.x + Nacos 2.3.2 + Knife4j 4.4.0
 【本地测试地址】http://localhost:8091/doc.html
 【接口】POST /api/v1/auth/login
 【请求参数】
@@ -144,7 +144,7 @@ java.lang.NullPointerException: Cannot invoke ...
 ### 4.2 Feign 调用失败
 
 ```text
-【环境】SpringCloud 2021.0.8 + Nacos 2.2.3 + OpenFeign
+【环境】SpringCloud 2021.0.8 + Nacos 2.3.2 + OpenFeign
 【现象】gov-workflow-service 调用 gov-item-service 报 404
 【被调用服务名】gov-item-service
 【Feign 接口】

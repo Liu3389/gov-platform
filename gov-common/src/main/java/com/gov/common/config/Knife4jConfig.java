@@ -60,7 +60,7 @@ public class Knife4jConfig {
                                 .name("Apache 2.0")
                                 .url("https://www.apache.org/licenses/LICENSE-2.0")))
                 .servers(List.of(
-                        new Server().url("http://localhost:8091/api/v1").description("网关（推荐）"),
+                        new Server().url("http://localhost:8091").description("网关（推荐）"),
                         new Server().url("http://localhost:8081").description("用户服务直连"),
                         new Server().url("http://localhost:8083").description("受理服务直连")
                 ))

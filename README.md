@@ -68,7 +68,7 @@ docker-compose ps
 | 核心框架 | Spring Boot | 2.7.18 |
 | 微服务 | Spring Cloud | 2021.0.8 |
 | 微服务 | Spring Cloud Alibaba | 2021.0.5.0 |
-| 注册中心 | Nacos | 2.2.3 |
+| 注册中心 | Nacos | 2.3.2 |
 | 持久层 | MyBatis-Plus | 3.5.5 |
 | 数据库 | MySQL | 8.0.33 |
 | 缓存 | Redis | 7.x |

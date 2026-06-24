@@ -60,8 +60,11 @@ public class AuthFilter implements GlobalFilter, Ordered {
             return chain.filter(exchange);
         }
 
-        // 获取 Token
+        // 获取 Token（优先标准 Authorization 头，兼容 Knife4j 的 authorize 头）
         String token = request.getHeaders().getFirst(HttpHeaders.AUTHORIZATION);
+        if (token == null || token.isEmpty()) {
+            token = request.getHeaders().getFirst("authorize");
+        }
         if (token == null || token.isEmpty()) {
             return unauthorizedResponse(exchange, "未提供认证令牌");
         }
@@ -76,16 +79,23 @@ public class AuthFilter implements GlobalFilter, Ordered {
             return unauthorizedResponse(exchange, "认证令牌无效或已过期");
         }
 
-        // 将用户信息传递给下游服务
+        // 将用户信息传递给下游服务（统一使用标准 Authorization 头）
         Long userId = JwtUtil.getUserId(token);
         String username = JwtUtil.getUsername(token);
+        Long deptId = JwtUtil.getDeptId(token);
 
-        ServerHttpRequest modifiedRequest = request.mutate()
+        ServerHttpRequest.Builder builder = request.mutate()
+            .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
             .header("X-User-Id", String.valueOf(userId))
-            .header("X-Username", username)
-            .build();
+            .header("X-Username", username);
 
-        return chain.filter(exchange.mutate().request(modifiedRequest).build());
+        if (deptId != null) {
+            builder.header("X-Dept-Id", String.valueOf(deptId));
+        }
+
+        ServerHttpRequest finalRequest = builder.build();
+
+        return chain.filter(exchange.mutate().request(finalRequest).build());
     }
 
     @Override

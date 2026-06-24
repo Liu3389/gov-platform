@@ -68,6 +68,26 @@ public class UserFeignFallbackFactory implements FallbackFactory<UserFeignClient
 
 - ❌ Feign 不写 fallbackFactory
 - ❌ `Result<?>` 通配符 → 必须具体类型
+- ❌ **Feign 方法参数使用 `Object` 类型** → 必须用具体 DTO 类，编译期类型检查
 - ❌ FallbackFactory 方法签名与 Feign 接口不一致
 - ❌ Feign 路径与被调方 Controller 路径不匹配
 - ❌ 在 Feign 参数中手动透传 Token → 自动透传已处理
+
+## Feign 接口参数示例
+
+```java
+// ✅ 正确：用具体 DTO 类型
+@FeignClient(name = "gov-license-service", path = "/license", fallbackFactory = LicenseFeignFallbackFactory.class)
+public interface LicenseFeignClient {
+    @PostMapping("/generate")
+    Result<LicenseVO> generate(@RequestBody LicenseGenerateDTO dto);
+}
+
+// ❌ 错误：用 Object 丢失类型安全
+@PostMapping("/generate")
+Result<LicenseVO> generate(@RequestBody Object generateDTO);  // 禁止！
+
+// ❌ 错误：用 Map 代替 DTO
+@PostMapping("/generate")
+Result<LicenseVO> generate(@RequestBody Map<String, Object> params);  // 禁止！
+```

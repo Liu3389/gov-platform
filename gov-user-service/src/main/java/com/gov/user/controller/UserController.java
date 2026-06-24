@@ -1,81 +1,90 @@
 package com.gov.user.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.gov.common.annotation.Log;
+import com.gov.common.exception.BusinessException;
 import com.gov.common.result.PageResult;
 import com.gov.common.result.Result;
+import com.gov.common.vo.UserVO;
+import com.gov.user.dto.LoginDTO;
+import com.gov.user.dto.RegisterDTO;
+import com.gov.user.dto.UserDTO;
 import com.gov.user.entity.UserEntity;
 import com.gov.user.service.UserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
 
-/**
- * 用户控制器（示例模板）
- * 其他组员参考此模板编写 Controller
- */
 @Tag(name = "用户管理", description = "用户登录、注册、信息管理接口")
 @RestController
 @RequestMapping("/user")
 @RequiredArgsConstructor
+@Validated
 public class UserController {
 
     private final UserService userService;
 
+    // ==================== 登录注册 ====================
+
+    @Operation(summary = "用户登录")
+    @PostMapping("/login")
+    public Result<com.gov.user.vo.LoginVO> login(
+            @Parameter(description = "登录请求") @Valid @RequestBody LoginDTO dto) {
+        return Result.success(userService.login(dto));
+    }
+
+    @Operation(summary = "用户注册")
+    @Log(module = "用户管理", action = "用户注册")
+    @PostMapping("/register")
+    public Result<Void> register(
+            @Parameter(description = "注册请求") @Valid @RequestBody RegisterDTO dto) {
+        userService.register(dto);
+        return Result.success();
+    }
+
+    // ==================== 查询 ====================
+
     @Operation(summary = "分页查询用户列表")
     @GetMapping("/list")
-    public Result<PageResult<UserEntity>> list(
+    public Result<PageResult<UserVO>> list(
             @Parameter(description = "页码") @RequestParam(defaultValue = "1") Long pageNum,
-            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") Long pageSize,
+            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Max(value = 100, message = "每页最大100条") Long pageSize,
             @Parameter(description = "用户名") @RequestParam(required = false) String username) {
-
-        LambdaQueryWrapper<UserEntity> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(UserEntity::getDeleted, 0);
-        if (username != null && !username.isEmpty()) {
-            wrapper.like(UserEntity::getUsername, username);
-        }
-        wrapper.orderByDesc(UserEntity::getCreateTime);
-
-        Page<UserEntity> page = userService.page(new Page<>(pageNum, pageSize), wrapper);
-        return Result.success(PageResult.of(page));
+        return Result.success(userService.pageQuery(pageNum, pageSize, username));
     }
 
     @Operation(summary = "根据ID查询用户")
     @GetMapping("/{id}")
-    public Result<UserEntity> getById(@Parameter(description = "用户ID") @PathVariable Long id) {
-        UserEntity user = userService.getById(id);
-        if (user == null || user.getDeleted() == 1) {
-            return Result.notFound("用户不存在");
-        }
-        return Result.success(user);
+    public Result<UserVO> getById(@Parameter(description = "用户ID") @PathVariable Long id) {
+        return Result.success(userService.getVOById(id));
     }
 
-    @Operation(summary = "新增用户")
+    @Operation(summary = "根据用户名查询用户")
+    @GetMapping("/byUsername")
+    public Result<UserVO> getByUsername(@Parameter(description = "用户名") @RequestParam String username) {
+        return Result.success(userService.getVOByUsername(username));
+    }
+
+    // ==================== 新增修改删除 ====================
+
+    @Operation(summary = "新增用户（管理端）")
     @Log(module = "用户管理", action = "新增用户")
     @PostMapping
-    public Result<Void> add(@Parameter(description = "用户信息") @Valid @RequestBody UserEntity user) {
-        // 检查用户名是否已存在
-        if (userService.getByUsername(user.getUsername()) != null) {
-            return Result.fail("用户名已存在");
-        }
-        userService.save(user);
+    public Result<Void> add(@Parameter(description = "用户信息") @Valid @RequestBody UserDTO dto) {
+        userService.addUser(dto);
         return Result.success();
     }
 
     @Operation(summary = "更新用户")
     @Log(module = "用户管理", action = "更新用户")
     @PutMapping
-    public Result<Void> update(@Parameter(description = "用户信息") @Valid @RequestBody UserEntity user) {
-        UserEntity exist = userService.getById(user.getId());
-        if (exist == null || exist.getDeleted() == 1) {
-            return Result.notFound("用户不存在");
-        }
-        userService.updateById(user);
+    public Result<Void> update(@Parameter(description = "用户信息") @Valid @RequestBody UserDTO dto) {
+        userService.updateUser(dto);
         return Result.success();
     }
 
@@ -83,11 +92,7 @@ public class UserController {
     @Log(module = "用户管理", action = "删除用户")
     @DeleteMapping("/{id}")
     public Result<Void> delete(@Parameter(description = "用户ID") @PathVariable Long id) {
-        UserEntity user = userService.getById(id);
-        if (user == null) {
-            return Result.notFound("用户不存在");
-        }
-        userService.removeById(id); // MyBatis-Plus 逻辑删除
+        userService.deleteUser(id);
         return Result.success();
     }
 }

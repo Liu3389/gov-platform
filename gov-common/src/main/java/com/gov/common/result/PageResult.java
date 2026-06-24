@@ -50,4 +50,11 @@ public class PageResult<T> implements Serializable {
     public static <T> PageResult<T> of(com.baomidou.mybatisplus.core.metadata.IPage<T> page) {
         return new PageResult<>(page.getRecords(), page.getTotal(), page.getCurrent(), page.getSize());
     }
+
+    /**
+     * 从手动转 VO 的 List 和 IPage 构建
+     */
+    public static <T> PageResult<T> of(List<T> records, long total, long pageNum, long pageSize) {
+        return new PageResult<>(records, total, pageNum, pageSize);
+    }
 }
