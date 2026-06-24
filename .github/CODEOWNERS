@@ -1,0 +1,31 @@
+# ==================== 代码所有权 ====================
+# 作用：当有人修改对应目录时，PR 必须经所有者审批才能合并
+# 用法：https://docs.github.com/cn/repositories/managing-your-repositorys-settings-and-features/customizing-your-repository/about-code-owners
+
+# 全局（组长审批所有 PR）
+* @Liu3389
+
+# ========== 公共模块 —— 组长（兼组员A） ==========
+/gov-common/      @Liu3389
+/gov-gateway/     @Liu3389
+/docker/          @Liu3389
+/.trae/           @Liu3389
+/.github/         @Liu3389
+
+# ========== 组长（兼组员A）：user + item ==========
+/gov-user-service/   @Liu3389
+/gov-item-service/   @Liu3389
+/gov-monitor-service/ @Liu3389
+
+# ========== 成员B：reception + open（请替换 @Liu3389 为成员B的GitHub用户名）==========
+/gov-reception-service/  @Liu3389
+/gov-open-service/       @Liu3389
+
+# ========== 成员C：activiti + license（请替换为成员C的GitHub用户名）==========
+/gov-activiti-service/  @Liu3389
+/gov-license-service/   @Liu3389
+
+# ========== 成员D：complaint + datashare + message（请替换为成员D的GitHub用户名）==========
+/gov-complaint-service/ @Liu3389
+/gov-datashare-service/ @Liu3389
+/gov-message-service/   @Liu3389
