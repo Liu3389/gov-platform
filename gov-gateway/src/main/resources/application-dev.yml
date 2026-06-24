@@ -217,6 +217,11 @@ knife4j:
     strategy: manual
     discover:
       enabled: false
+    global-parameter:
+       header-parameters:
+         - name: Authorization
+           description: "粘贴：Bearer 后面跟Token（先调/dev-token获取）"
+           required: false
     routes:
       - name: 用户认证服务
         serviceName: gov-user-service
