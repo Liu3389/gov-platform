@@ -49,11 +49,11 @@ public class UserController {
         return Result.success();
     }
 
-    @Operation(summary = "获取开发用Token（免登录，直接返回admin Token）")
+    @Operation(summary = "获取开发用Token（免登录，直接返回admin Token，有效期24小时）")
     @GetMapping("/dev-token")
     public Result<String> devToken() {
         String token = JwtUtil.generateTokenWithRoles(1L, "admin", "ROLE_ADMIN", null, 86400000L);
-        return Result.success("Bearer " + token, "Token有效期24小时，在Authorize对话框输入纯Token即可");
+        return Result.success(token);
     }
 
     // ==================== 查询 ====================
