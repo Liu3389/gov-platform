@@ -217,11 +217,6 @@ knife4j:
     strategy: manual
     discover:
       enabled: false
-    global-parameter:
-      header-parameters:
-        - name: Authorization
-          description: "粘贴 JWT Token（不含 Bearer 前缀，格式如 eyJhbG...）"
-          required: false
     routes:
       - name: 用户认证服务
         serviceName: gov-user-service
