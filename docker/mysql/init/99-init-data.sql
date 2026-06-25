@@ -98,3 +98,12 @@ USE gov_activiti;
 INSERT INTO t_workflow_process (id, process_key, process_name, process_category, bpmn_url, version, description, status, create_time) VALUES
 (1, 'apply_approval_v1', '审批流程', 'apply', '/processes/apply_approval_v1.bpmn', 1, '标准审批流程：受理→审批→办结', '1', NOW()),
 (2, 'apply_countersign_v1', '会签流程', 'apply', '/processes/apply_countersign_v1.bpmn', 1, '会签审批流程：受理→多部门会签→审批→办结', '1', NOW());
+
+-- ==================== 用户角色关联 ====================
+USE gov_user;
+
+-- 管理员(1) → 超级管理员角色(1)
+INSERT INTO t_user_role (id, user_id, role_id, create_time) VALUES (1, 1, 1, NOW());
+
+-- 后续可补充更多用户角色：
+-- INSERT INTO t_user_role (id, user_id, role_id, create_time) VALUES (2, 2, 2, NOW());  -- 测试用户 → 窗口工作人员
