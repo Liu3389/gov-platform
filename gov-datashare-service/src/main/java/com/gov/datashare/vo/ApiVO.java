@@ -1,19 +1,22 @@
-package com.gov.datashare.entity;
+package com.gov.datashare.vo;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.gov.common.entity.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
- * 共享接口实体
+ * 共享接口出参 VO
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-@TableName("t_share_api")
-@Schema(description = "共享接口")
-public class ApiEntity extends BaseEntity {
+@Schema(description = "共享接口信息")
+public class ApiVO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Schema(description = "接口ID")
+    private Long id;
 
     @Schema(description = "接口编码")
     private String apiCode;
@@ -56,4 +59,10 @@ public class ApiEntity extends BaseEntity {
 
     @Schema(description = "状态：1发布 0禁用")
     private String status;
+
+    @Schema(description = "创建时间")
+    private LocalDateTime createTime;
+
+    @Schema(description = "更新时间")
+    private LocalDateTime updateTime;
 }
