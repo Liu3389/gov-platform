@@ -49,10 +49,10 @@ public class MybatisPlusConfig {
 
             @Override
             public void updateFill(MetaObject metaObject) {
-                this.strictUpdateFill(metaObject, "updateTime", LocalDateTime.class, LocalDateTime.now());
+                this.setFieldValByName("updateTime", LocalDateTime.now(), metaObject);
                 Long userId = getCurrentUserId();
                 if (userId != null) {
-                    this.strictUpdateFill(metaObject, "updateBy", Long.class, userId);
+                    this.setFieldValByName("updateBy", userId, metaObject);
                 }
             }
 

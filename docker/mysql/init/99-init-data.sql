@@ -7,7 +7,7 @@ USE gov_user;
 
 -- 初始化管理员用户（密码：admin123，BCrypt加密）
 INSERT INTO t_user_info (id, username, password, phone, real_name, status, create_time) VALUES
-(1, 'admin', '$2a$10$N.zmdr9k7uOCQb376NoUnuTJ8iAt6Z5EHsM8lE9lBOsl7iAt6Z5EH', '13800138000', '系统管理员', 0, NOW());
+(1, 'admin', '$2a$10$N9qo8uLOickgx2ZMRZoMyeIjZAgcfl7p92ldGxad68LJZdL17lhWy', '13800138000', '系统管理员', 0, NOW());
 
 -- 初始化角色
 INSERT INTO t_role_info (id, role_name, role_code, status, remark, create_time) VALUES
@@ -92,3 +92,9 @@ INSERT INTO t_license_catalog (id, catalog_code, catalog_name, dept_id, template
 (3, 'MARRIAGE_CERT', '结婚证', 10003, '/template/marriage_cert.pdf', 1, NOW()),
 (4, 'SOCIAL_CARD', '社保卡', 10004, '/template/social_card.pdf', 1, NOW()),
 (5, 'HEALTH_CERT', '健康证', 10005, '/template/health_cert.pdf', 1, NOW());
+
+-- 初始化工作流流程定义
+USE gov_activiti;
+INSERT INTO t_workflow_process (id, process_key, process_name, process_category, bpmn_url, version, description, status, create_time) VALUES
+(1, 'apply_approval_v1', '审批流程', 'apply', '/processes/apply_approval_v1.bpmn', 1, '标准审批流程：受理→审批→办结', '1', NOW()),
+(2, 'apply_countersign_v1', '会签流程', 'apply', '/processes/apply_countersign_v1.bpmn', 1, '会签审批流程：受理→多部门会签→审批→办结', '1', NOW());
