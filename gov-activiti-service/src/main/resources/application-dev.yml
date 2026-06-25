@@ -70,4 +70,4 @@ knife4j:
 
 logging:
   level:
-    com.gov.activiti: warn
+    com.gov.activiti: debug

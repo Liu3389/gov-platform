@@ -9,17 +9,20 @@
     targetNamespace="http://www.activiti.org/test">
 
   <!--
-    单部门审批流程 v1
-    流程Key：apply_approval_v1（对应 WorkflowConstants.PROCESS_SINGLE_DEPT）
+    多部门会签流程 v1
+    流程Key：apply_countersign_v1（对应 WorkflowConstants.PROCESS_MULTI_DEPT）
     流程变量参考：WorkflowConstants
       - applyNo：办件号
       - userId：申请人ID
       - itemId：事项ID
       - deptId：部门ID
+      - deptList：会签部门列表
+      - deptLeader：会签部门领导
+      - allApproved：是否全部通过
       - approvalResult：审批结果（1通过 2驳回）
       - approvalOpinion：审批意见
   -->
-  <process id="apply_approval_v1" name="单部门审批流程" isExecutable="true">
+  <process id="apply_countersign_v1" name="多部门会签流程" isExecutable="true">
 
     <startEvent id="start_apply" name="开始" />
 
@@ -33,11 +36,17 @@
 
     <exclusiveGateway id="gateway_review_result" name="初审结果" />
 
-    <userTask id="task_approve_dept" name="部门审批"
-        activiti:candidateGroups="dept_leader"
-        activiti:dueDate="${dueDate}" />
+    <!-- 会签：多实例并行任务 -->
+    <userTask id="task_countersign_multi" name="多部门会签"
+        activiti:assignee="${deptLeader}">
+      <multiInstanceLoopCharacteristics isSequential="false"
+          activiti:collection="deptList"
+          activiti:elementVariable="deptLeader">
+        <completionCondition>${nrOfCompletedInstances == nrOfInstances &amp;&amp; allApproved}</completionCondition>
+      </multiInstanceLoopCharacteristics>
+    </userTask>
 
-    <exclusiveGateway id="gateway_approve_result" name="审批结果" />
+    <exclusiveGateway id="gateway_countersign_result" name="会签结果" />
 
     <serviceTask id="service_generate_license" name="生成证照"
         activiti:expression="${licenseService.generate(applyNo, itemId, userId)}" />
@@ -55,8 +64,8 @@
     <sequenceFlow id="flow_accept_to_review" sourceRef="task_accept_window" targetRef="task_review_dept" />
     <sequenceFlow id="flow_review_to_gateway" sourceRef="task_review_dept" targetRef="gateway_review_result" />
 
-    <!-- 初审通过 → 部门审批 -->
-    <sequenceFlow id="flow_review_pass" sourceRef="gateway_review_result" targetRef="task_approve_dept">
+    <!-- 初审通过 → 多部门会签 -->
+    <sequenceFlow id="flow_review_pass" sourceRef="gateway_review_result" targetRef="task_countersign_multi">
       <conditionExpression xsi:type="tFormalExpression">${approvalResult == 1}</conditionExpression>
     </sequenceFlow>
     <!-- 初审驳回 → 退回申请人 -->
@@ -64,15 +73,15 @@
       <conditionExpression xsi:type="tFormalExpression">${approvalResult == 2}</conditionExpression>
     </sequenceFlow>
 
-    <sequenceFlow id="flow_approve_to_gateway" sourceRef="task_approve_dept" targetRef="gateway_approve_result" />
+    <sequenceFlow id="flow_countersign_to_gateway" sourceRef="task_countersign_multi" targetRef="gateway_countersign_result" />
 
-    <!-- 审批通过 → 生成证照 → 通知 → 结束 -->
-    <sequenceFlow id="flow_approve_pass" sourceRef="gateway_approve_result" targetRef="service_generate_license">
-      <conditionExpression xsi:type="tFormalExpression">${approvalResult == 1}</conditionExpression>
+    <!-- 会签全部通过 → 生成证照 → 通知 → 结束 -->
+    <sequenceFlow id="flow_countersign_pass" sourceRef="gateway_countersign_result" targetRef="service_generate_license">
+      <conditionExpression xsi:type="tFormalExpression">${allApproved}</conditionExpression>
     </sequenceFlow>
-    <!-- 审批驳回 → 退回申请人 -->
-    <sequenceFlow id="flow_approve_reject" sourceRef="gateway_approve_result" targetRef="task_return_user">
-      <conditionExpression xsi:type="tFormalExpression">${approvalResult == 2}</conditionExpression>
+    <!-- 会签有驳回 → 退回申请人 -->
+    <sequenceFlow id="flow_countersign_reject" sourceRef="gateway_countersign_result" targetRef="task_return_user">
+      <conditionExpression xsi:type="tFormalExpression">${!allApproved}</conditionExpression>
     </sequenceFlow>
 
     <sequenceFlow id="flow_license_to_notify" sourceRef="service_generate_license" targetRef="service_notify_user" />
