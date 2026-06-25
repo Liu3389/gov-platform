@@ -60,7 +60,7 @@
 | gov-activiti-service  | 8084 | gov\_activiti  | 4        | 组员C     |
 | gov-license-service   | 8085 | gov\_license   | 5        | 组员C     |
 | gov-complaint-service | 8086 | gov\_complaint | 6        | 组员D     |
-| gov-open-service      | 8087 | gov\_open      | 7        | 组员A     |
+| gov-open-service      | 8087 | gov\_open      | 7        | 成员B     |
 | gov-datashare-service | 8088 | gov\_datashare | 8        | 组员D     |
 | gov-message-service   | 8089 | gov\_message   | 9        | 组员D     |
 | gov-monitor-service   | 8090 | gov\_monitor   | 10       | 组长      |
@@ -74,7 +74,7 @@
 | 核心框架   | Spring Boot          | 2.7.18         |
 | 核心框架   | Spring Cloud         | 2021.0.8       |
 | 核心框架   | Spring Cloud Alibaba | 2021.0.5.0     |
-| 注册配置中心 | Nacos                | 2.2.3          |
+| 注册配置中心 | Nacos                | 2.3.2          |
 | 持久层    | MyBatis-Plus         | 3.5.5          |
 | 持久层    | MySQL                | 8.0.33         |
 | 持久层    | Druid                | 1.2.20         |

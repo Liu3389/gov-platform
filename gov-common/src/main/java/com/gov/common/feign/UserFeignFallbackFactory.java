@@ -1,4 +1,4 @@
-package com.gov.reception.feign;
+package com.gov.common.feign;
 
 import com.gov.common.result.Result;
 import com.gov.common.sentinel.SentinelBlockHandler;
@@ -20,12 +20,12 @@ public class UserFeignFallbackFactory implements FallbackFactory<UserFeignClient
         return new UserFeignClient() {
             @Override
             public Result<UserVO> getById(Long id) {
-                return SentinelBlockHandler.<UserVO>blockHandler("user-service", "getById");
+                return SentinelBlockHandler.<UserVO>blockHandler("gov-user-service", "getById");
             }
 
             @Override
             public Result<UserVO> getByUsername(String username) {
-                return SentinelBlockHandler.<UserVO>blockHandler("user-service", "getByUsername");
+                return SentinelBlockHandler.<UserVO>blockHandler("gov-user-service", "getByUsername");
             }
         };
     }

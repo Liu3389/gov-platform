@@ -6,7 +6,7 @@
 -- 默认账号密码：nacos/nacos
 -- =====================================================
 
--- 通过 MySQL 直接插入 Nacos namespace（Nacos 2.2.3 表结构）
+-- 通过 MySQL 直接插入 Nacos namespace（Nacos 2.3.2 表结构）
 
 USE nacos;
 
