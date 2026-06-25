@@ -1,21 +1,22 @@
-package com.gov.complaint.entity;
+package com.gov.complaint.vo;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.gov.common.entity.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 
 /**
- * 投诉工单实体
+ * 投诉工单出参 VO
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-@TableName("t_complaint_work")
-@Schema(description = "投诉工单")
-public class WorkEntity extends BaseEntity {
+@Schema(description = "投诉工单信息")
+public class WorkVO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Schema(description = "工单ID")
+    private Long id;
 
     @Schema(description = "工单编号")
     private String workNo;
@@ -26,11 +27,8 @@ public class WorkEntity extends BaseEntity {
     @Schema(description = "投诉人姓名")
     private String userName;
 
-    @Schema(description = "投诉人电话 [脱敏]")
+    @Schema(description = "投诉人电话")
     private String userPhone;
-
-    @Schema(description = "投诉人身份证号 [脱敏]")
-    private String userIdCard;
 
     @Schema(description = "分类ID")
     private Long categoryId;
@@ -85,4 +83,10 @@ public class WorkEntity extends BaseEntity {
 
     @Schema(description = "备注")
     private String remark;
+
+    @Schema(description = "创建时间")
+    private LocalDateTime createTime;
+
+    @Schema(description = "更新时间")
+    private LocalDateTime updateTime;
 }

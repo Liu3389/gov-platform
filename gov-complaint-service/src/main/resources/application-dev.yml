@@ -7,6 +7,8 @@ spring:
   config:
     import: "optional:nacos:gov-platform-common.yaml?group=DEFAULT_GROUP"
   cloud:
+    sentinel:
+      enabled: false
     nacos:
       discovery:
         server-addr: localhost:8848
@@ -58,4 +60,4 @@ knife4j:
 
 logging:
   level:
-    com.gov.complaint: warn
+    com.gov.complaint: debug

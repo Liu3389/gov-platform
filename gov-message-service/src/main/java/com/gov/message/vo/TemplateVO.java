@@ -1,19 +1,22 @@
-package com.gov.message.entity;
+package com.gov.message.vo;
 
-import com.baomidou.mybatisplus.annotation.TableName;
-import com.gov.common.entity.BaseEntity;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
+import java.time.LocalDateTime;
 
 /**
- * 消息模板实体
+ * 消息模板出参 VO
  */
 @Data
-@EqualsAndHashCode(callSuper = true)
-@TableName("t_message_template")
-@Schema(description = "消息模板")
-public class TemplateEntity extends BaseEntity {
+@Schema(description = "消息模板信息")
+public class TemplateVO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    @Schema(description = "模板ID")
+    private Long id;
 
     @Schema(description = "模板编码")
     private String templateCode;
@@ -35,4 +38,10 @@ public class TemplateEntity extends BaseEntity {
 
     @Schema(description = "状态：1启用 0禁用")
     private String status;
+
+    @Schema(description = "创建时间")
+    private LocalDateTime createTime;
+
+    @Schema(description = "更新时间")
+    private LocalDateTime updateTime;
 }

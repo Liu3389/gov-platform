@@ -1,79 +1,74 @@
 package com.gov.datashare.controller;
 
-import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.gov.common.annotation.Log;
+import com.gov.common.annotation.RequirePermission;
 import com.gov.common.result.PageResult;
 import com.gov.common.result.Result;
-import com.gov.datashare.entity.ApiEntity;
+import com.gov.datashare.dto.ApiDTO;
 import com.gov.datashare.service.ApiService;
+import com.gov.datashare.vo.ApiVO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Max;
 
-@Tag(name = "共享接口", description = "共享接口")
+/**
+ * 共享接口管理
+ */
+@Tag(name = "共享接口", description = "共享接口管理")
 @RestController
 @RequestMapping("/share")
 @RequiredArgsConstructor
+@Validated
 public class ApiController {
 
     private final ApiService apiService;
 
-    @Operation(summary = "分页查询")
+    @Operation(summary = "分页查询接口")
     @GetMapping("/list")
-    public Result<PageResult<ApiEntity>> list(
+    public Result<PageResult<ApiVO>> list(
             @Parameter(description = "页码") @RequestParam(defaultValue = "1") Long pageNum,
-            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") Long pageSize) {
-        LambdaQueryWrapper<ApiEntity> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(ApiEntity::getDeleted, 0);
-        wrapper.orderByDesc(ApiEntity::getCreateTime);
-        Page<ApiEntity> page = apiService.page(new Page<>(pageNum, pageSize), wrapper);
-        return Result.success(PageResult.of(page));
+            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Max(value = 100, message = "每页最大100条") Long pageSize,
+            @Parameter(description = "关键词") @RequestParam(required = false) String keyword,
+            @Parameter(description = "状态") @RequestParam(required = false) String status) {
+        return Result.success(apiService.pageQueryVO(pageNum, pageSize, keyword, status));
     }
 
-    @Operation(summary = "根据ID查询")
+    @Operation(summary = "根据ID查询接口")
     @GetMapping("/{id}")
-    public Result<ApiEntity> getById(@Parameter(description = "ID") @PathVariable Long id) {
-        ApiEntity entity = apiService.getById(id);
-        if (entity == null || entity.getDeleted() == 1) {
-            return Result.notFound("数据不存在");
-        }
-        return Result.success(entity);
+    public Result<ApiVO> getById(@Parameter(description = "接口ID") @PathVariable Long id) {
+        return Result.success(apiService.getVOById(id));
     }
 
-    @Operation(summary = "新增")
+    @Operation(summary = "新增接口")
     @Log(module = "数据共享", action = "新增接口")
+    @RequirePermission(value = "datashare:add")
     @PostMapping
-    public Result<Void> add(@Parameter(description = "共享接口信息") @Valid @RequestBody ApiEntity entity) {
-        apiService.save(entity);
+    public Result<Void> add(@Valid @RequestBody ApiDTO dto) {
+        apiService.addApi(dto);
         return Result.success();
     }
 
-    @Operation(summary = "更新")
-    @Log(module = "数据共享", action = "更新接口")
+    @Operation(summary = "修改接口")
+    @Log(module = "数据共享", action = "修改接口")
+    @RequirePermission(value = "datashare:edit")
     @PutMapping
-    public Result<Void> update(@Parameter(description = "共享接口信息") @Valid @RequestBody ApiEntity entity) {
-        ApiEntity exist = apiService.getById(entity.getId());
-        if (exist == null || exist.getDeleted() == 1) {
-            return Result.notFound("数据不存在");
-        }
-        apiService.updateById(entity);
+    public Result<Void> update(@Valid @RequestBody ApiDTO dto) {
+        apiService.updateApi(dto);
         return Result.success();
     }
 
-    @Operation(summary = "删除")
+    @Operation(summary = "删除接口")
     @Log(module = "数据共享", action = "删除接口")
+    @RequirePermission(value = "datashare:delete")
     @DeleteMapping("/{id}")
-    public Result<Void> delete(@Parameter(description = "ID") @PathVariable Long id) {
-        ApiEntity entity = apiService.getById(id);
-        if (entity == null) {
-            return Result.notFound("数据不存在");
-        }
-        apiService.removeById(id);
+    public Result<Void> delete(@Parameter(description = "接口ID") @PathVariable Long id) {
+        apiService.deleteApi(id);
         return Result.success();
     }
 }
