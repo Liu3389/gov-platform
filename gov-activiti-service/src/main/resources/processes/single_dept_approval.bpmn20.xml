@@ -24,26 +24,20 @@
     <startEvent id="start_apply" name="开始" />
 
     <userTask id="task_accept_window" name="窗口受理"
-        activiti:candidateGroups="window_staff"
-        activiti:formKey="${formKey}" />
+        activiti:candidateGroups="window_staff" />
 
     <userTask id="task_review_dept" name="部门初审"
-        activiti:candidateGroups="dept_staff"
-        activiti:dueDate="${dueDate}" />
+        activiti:candidateGroups="dept_staff" />
 
     <exclusiveGateway id="gateway_review_result" name="初审结果" />
 
     <userTask id="task_approve_dept" name="部门审批"
-        activiti:candidateGroups="dept_leader"
-        activiti:dueDate="${dueDate}" />
+        activiti:candidateGroups="dept_leader" />
 
     <exclusiveGateway id="gateway_approve_result" name="审批结果" />
 
-    <serviceTask id="service_generate_license" name="生成证照"
-        activiti:expression="${licenseService.generate(applyNo, itemId, userId)}" />
-
-    <serviceTask id="service_notify_user" name="通知申请人"
-        activiti:expression="${messageService.sendCompleteNotice(applyNo, userId)}" />
+    <userTask id="task_complete" name="办结"
+        activiti:assignee="${applyUserId}" />
 
     <userTask id="task_return_user" name="退回申请人"
         activiti:assignee="${applyUserId}" />
@@ -66,8 +60,8 @@
 
     <sequenceFlow id="flow_approve_to_gateway" sourceRef="task_approve_dept" targetRef="gateway_approve_result" />
 
-    <!-- 审批通过 → 生成证照 → 通知 → 结束 -->
-    <sequenceFlow id="flow_approve_pass" sourceRef="gateway_approve_result" targetRef="service_generate_license">
+    <!-- 审批通过 → 办结 → 结束 -->
+    <sequenceFlow id="flow_approve_pass" sourceRef="gateway_approve_result" targetRef="task_complete">
       <conditionExpression xsi:type="tFormalExpression">${approvalResult == 1}</conditionExpression>
     </sequenceFlow>
     <!-- 审批驳回 → 退回申请人 -->
@@ -75,8 +69,7 @@
       <conditionExpression xsi:type="tFormalExpression">${approvalResult == 2}</conditionExpression>
     </sequenceFlow>
 
-    <sequenceFlow id="flow_license_to_notify" sourceRef="service_generate_license" targetRef="service_notify_user" />
-    <sequenceFlow id="flow_notify_to_end" sourceRef="service_notify_user" targetRef="end_apply" />
+    <sequenceFlow id="flow_complete_to_end" sourceRef="task_complete" targetRef="end_apply" />
     <sequenceFlow id="flow_return_to_end" sourceRef="task_return_user" targetRef="end_apply" />
 
   </process>

@@ -20,13 +20,19 @@ import com.gov.common.exception.BusinessException;
 import com.gov.common.result.PageResult;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.activiti.engine.RepositoryService;
 import org.activiti.engine.RuntimeService;
 import org.activiti.engine.TaskService;
+import org.activiti.engine.repository.Deployment;
 import org.activiti.engine.runtime.ProcessInstance;
 import org.activiti.engine.task.Task;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.annotation.PostConstruct;
+import java.io.IOException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -39,11 +45,39 @@ public class WorkflowTaskServiceImpl extends ServiceImpl<WorkflowTaskMapper, Wor
 
   private final RuntimeService runtimeService;
   private final TaskService taskService;
+  private final RepositoryService repositoryService;
   private final WorkflowInstanceMapper workflowInstanceMapper;
   private final WorkflowProcessMapper workflowProcessMapper;
   private final WorkflowOpinionMapper workflowOpinionMapper;
   private final WorkflowReminderMapper workflowReminderMapper;
   private final WorkflowDelegateMapper workflowDelegateMapper;
+
+  /**
+   * 启动时自动部署 BPMN 流程定义
+   */
+  @PostConstruct
+  public void deployProcesses() {
+    try {
+      Resource[] resources = new PathMatchingResourcePatternResolver()
+          .getResources("classpath:processes/*.bpmn20.xml");
+      for (Resource res : resources) {
+        String filename = res.getFilename();
+        long count = repositoryService.createDeploymentQuery()
+            .deploymentName(filename).count();
+        if (count == 0) {
+          Deployment dep = repositoryService.createDeployment()
+              .addInputStream(filename, res.getInputStream())
+              .name(filename)
+              .deploy();
+          log.info("BPMN 部署成功：{} deploymentId={}", filename, dep.getId());
+        } else {
+          log.info("BPMN 已部署，跳过：{}", filename);
+        }
+      }
+    } catch (IOException e) {
+      log.error("BPMN 文件扫描失败", e);
+    }
+  }
 
   @Override
   public PageResult<TaskVO> pageQuery(Long pageNum, Long pageSize, String taskName, String processKey, String status,
@@ -112,8 +146,14 @@ public class WorkflowTaskServiceImpl extends ServiceImpl<WorkflowTaskMapper, Wor
       variables.putAll(dto.getVariables());
     }
 
-    // 启动 Activiti 流程实例
-    ProcessInstance pi = runtimeService.startProcessInstanceByKey(dto.getProcessKey(), variables);
+    // 启动 Activiti 流程实例 ── 带详细异常信息
+    ProcessInstance pi;
+    try {
+      pi = runtimeService.startProcessInstanceByKey(dto.getProcessKey(), variables);
+    } catch (Exception e) {
+      log.error("启动流程失败：processKey={}, error={}", dto.getProcessKey(), e.getMessage(), e);
+      throw new BusinessException(500, "启动流程失败：" + e.getMessage());
+    }
     String instanceId = pi.getProcessInstanceId();
     log.info("流程启动成功：processKey={}, instanceId={}, applyNo={}", dto.getProcessKey(), instanceId, dto.getApplyNo());
 
