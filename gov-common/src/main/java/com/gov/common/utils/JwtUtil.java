@@ -17,6 +17,9 @@ public class JwtUtil {
     /** 默认密钥（生产环境必须通过 Nacos 配置注入） */
     private static final String DEFAULT_SECRET = "GovPlatformSecretKey2024ForJwtTokenGenerationAndValidation";
 
+    /** 运行时可配置的密钥（由 JwtConfig 初始化） */
+    private static String SECRET = DEFAULT_SECRET;
+
     /** Token 默认有效期（毫秒）：2 小时 */
     public static final long DEFAULT_EXPIRE_TIME = 2 * 60 * 60 * 1000L;
 
@@ -25,6 +28,17 @@ public class JwtUtil {
 
     /** 签发者 */
     private static final String ISSUER = "gov-platform";
+
+    /**
+     * 设置 JWT 密钥（由配置中心注入，支持密钥轮换）
+     *
+     * @param secret JWT 签名密钥
+     */
+    public static void setSecret(String secret) {
+        if (secret != null && !secret.isEmpty()) {
+            SECRET = secret;
+        }
+    }
 
     /**
      * 生成 JWT Token（默认有效期 2 小时）
@@ -47,7 +61,7 @@ public class JwtUtil {
      * @return JWT Token 字符串
      */
     public static String generateToken(Long userId, String username, Map<String, Object> claims, long expireTime) {
-        SecretKey key = Keys.hmacShaKeyFor(DEFAULT_SECRET.getBytes(StandardCharsets.UTF_8));
+        SecretKey key = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
 
         JwtBuilder builder = Jwts.builder()
             .subject(String.valueOf(userId))
@@ -76,7 +90,7 @@ public class JwtUtil {
      * @return JWT Token 字符串
      */
     public static String generateTokenWithRoles(Long userId, String username, String roles, Long deptId, long expireTime) {
-        SecretKey key = Keys.hmacShaKeyFor(DEFAULT_SECRET.getBytes(StandardCharsets.UTF_8));
+        SecretKey key = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
 
         return Jwts.builder()
             .subject(String.valueOf(userId))
@@ -98,7 +112,7 @@ public class JwtUtil {
      * @throws JwtException Token 无效或过期
      */
     public static Claims parseToken(String token) {
-        SecretKey key = Keys.hmacShaKeyFor(DEFAULT_SECRET.getBytes(StandardCharsets.UTF_8));
+        SecretKey key = Keys.hmacShaKeyFor(SECRET.getBytes(StandardCharsets.UTF_8));
         return Jwts.parser()
             .verifyWith(key)
             .build()

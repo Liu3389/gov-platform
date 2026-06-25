@@ -42,7 +42,7 @@
         <spring-cloud-alibaba.version>2021.0.5.0</spring-cloud-alibaba.version>
 
         <!-- 注册配置中心 -->
-        <nacos.version>2.2.3</nacos.version>
+        <nacos.version>2.3.2</nacos.version>
 
         <!-- 持久层 -->
         <mybatis-plus.version>3.5.5</mybatis-plus.version>

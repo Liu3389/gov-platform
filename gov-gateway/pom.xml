@@ -72,6 +72,13 @@
             <version>${knife4j.version}</version>
         </dependency>
 
+        <!-- ==================== Swagger Models（网关安全配置用） ==================== -->
+        <dependency>
+            <groupId>io.swagger.core.v3</groupId>
+            <artifactId>swagger-models</artifactId>
+            <version>2.2.20</version>
+        </dependency>
+
         <!-- ==================== Redis（限流、Token） ==================== -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -104,6 +111,12 @@
         <dependency>
             <groupId>com.alibaba.fastjson2</groupId>
             <artifactId>fastjson2</artifactId>
+        </dependency>
+
+        <!-- ==================== Sentinel Nacos 数据源（限流规则持久化） ==================== -->
+        <dependency>
+            <groupId>com.alibaba.csp</groupId>
+            <artifactId>sentinel-datasource-nacos</artifactId>
         </dependency>
 
         <!-- ==================== Netty macOS 原生 DNS 解析器（M2 芯片） ==================== -->

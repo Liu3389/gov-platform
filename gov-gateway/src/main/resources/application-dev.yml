@@ -24,8 +24,7 @@ spring:
     gateway:
       discovery:
         locator:
-          enabled: true
-          lower-case-service-id: true
+          enabled: false
       routes:
         # ==================== Knife4j 文档路由（RewritePath，必须在业务路由之前） ====================
         - id: knife4j-user-docs
@@ -90,10 +89,60 @@ spring:
             - RewritePath=/monitor/(?<remaining>.*), /$\{remaining}
 
         # ==================== 业务路由 ====================
-        - id: gov-user-service
+        # gov-user-service 路由（用户、部门、角色、菜单、字典、区划、登录日志、实名认证）
+        - id: gov-user-service-user
           uri: lb://gov-user-service
           predicates:
             - Path=/api/v1/user/**
+          filters:
+            - StripPrefix=2
+
+        - id: gov-user-service-dept
+          uri: lb://gov-user-service
+          predicates:
+            - Path=/api/v1/dept/**
+          filters:
+            - StripPrefix=2
+
+        - id: gov-user-service-role
+          uri: lb://gov-user-service
+          predicates:
+            - Path=/api/v1/role/**
+          filters:
+            - StripPrefix=2
+
+        - id: gov-user-service-menu
+          uri: lb://gov-user-service
+          predicates:
+            - Path=/api/v1/menu/**
+          filters:
+            - StripPrefix=2
+
+        - id: gov-user-service-dict
+          uri: lb://gov-user-service
+          predicates:
+            - Path=/api/v1/dict/**
+          filters:
+            - StripPrefix=2
+
+        - id: gov-user-service-region
+          uri: lb://gov-user-service
+          predicates:
+            - Path=/api/v1/region/**
+          filters:
+            - StripPrefix=2
+
+        - id: gov-user-service-login-log
+          uri: lb://gov-user-service
+          predicates:
+            - Path=/api/v1/login-log/**
+          filters:
+            - StripPrefix=2
+
+        - id: gov-user-service-realname
+          uri: lb://gov-user-service
+          predicates:
+            - Path=/api/v1/realname/**
           filters:
             - StripPrefix=2
 
@@ -166,56 +215,63 @@ knife4j:
   gateway:
     enabled: true
     strategy: manual
+    discover:
+      enabled: false
+    global-parameter:
+      header-parameters:
+        - name: Authorization
+          description: "粘贴：Bearer 后面跟Token（先调/dev-token获取）"
+          required: false
     routes:
       - name: 用户认证服务
         serviceName: gov-user-service
         url: /user/v3/api-docs
-        context-path: /api/v1/user
+        context-path: /api/v1
         order: 1
       - name: 事项管理服务
         serviceName: gov-item-service
         url: /item/v3/api-docs
-        context-path: /api/v1/item
+        context-path: /api/v1
         order: 2
       - name: 统一受理服务
         serviceName: gov-reception-service
         url: /reception/v3/api-docs
-        context-path: /api/v1/reception
+        context-path: /api/v1
         order: 3
       - name: 审批流转服务
         serviceName: gov-activiti-service
         url: /workflow/v3/api-docs
-        context-path: /api/v1/workflow
+        context-path: /api/v1
         order: 4
       - name: 电子证照服务
         serviceName: gov-license-service
         url: /license/v3/api-docs
-        context-path: /api/v1/license
+        context-path: /api/v1
         order: 5
       - name: 投诉建议服务
         serviceName: gov-complaint-service
         url: /complaint/v3/api-docs
-        context-path: /api/v1/complaint
+        context-path: /api/v1
         order: 6
       - name: 政务公开服务
         serviceName: gov-open-service
         url: /open/v3/api-docs
-        context-path: /api/v1/open
+        context-path: /api/v1
         order: 7
       - name: 数据共享服务
         serviceName: gov-datashare-service
         url: /share/v3/api-docs
-        context-path: /api/v1/share
+        context-path: /api/v1
         order: 8
       - name: 消息通知服务
         serviceName: gov-message-service
         url: /message/v3/api-docs
-        context-path: /api/v1/message
+        context-path: /api/v1
         order: 9
       - name: 监察审计服务
         serviceName: gov-monitor-service
         url: /monitor/v3/api-docs
-        context-path: /api/v1/monitor
+        context-path: /api/v1
         order: 10
 
 # ==================== 日志配置 ====================
