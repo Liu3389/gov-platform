@@ -1,5 +1,6 @@
 package com.gov.activiti.feign;
 
+import com.gov.activiti.dto.LicenseGenerateDTO;
 import com.gov.common.result.Result;
 import com.gov.common.vo.LicenseVO;
 import org.springframework.cloud.openfeign.FeignClient;
@@ -14,5 +15,5 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface LicenseFeignClient {
 
     @PostMapping("/generate")
-    Result<LicenseVO> generate(@RequestBody Object generateDTO);
+    Result<LicenseVO> generate(@RequestBody LicenseGenerateDTO dto);
 }

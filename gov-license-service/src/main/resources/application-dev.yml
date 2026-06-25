@@ -58,4 +58,4 @@ knife4j:
 
 logging:
   level:
-    com.gov.license: warn
+    com.gov.license: debug
