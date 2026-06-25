@@ -102,8 +102,6 @@ INSERT INTO t_workflow_process (id, process_key, process_name, process_category,
 -- ==================== 用户角色关联 ====================
 USE gov_user;
 
--- 管理员(1) → 超级管理员角色(1)
 INSERT INTO t_user_role (id, user_id, role_id, create_time) VALUES (1, 1, 1, NOW());
+INSERT INTO t_user_role (id, user_id, role_id, create_time) VALUES (2, 2, 2, NOW());  -- 测试用户 → 窗口工作人员
 
--- 后续可补充更多用户角色：
--- INSERT INTO t_user_role (id, user_id, role_id, create_time) VALUES (2, 2, 2, NOW());  -- 测试用户 → 窗口工作人员
