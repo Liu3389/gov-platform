@@ -35,6 +35,7 @@ public class AuthFilter implements GlobalFilter, Ordered {
         "/api/v1/user/dev-token",
         "/api/v1/open/notice",
         "/api/v1/open/policy",
+        "/api/v1/open/public",
         "/doc.html",
         "/webjars",
         "/v3/api-docs",

@@ -45,7 +45,7 @@ services:
     restart: always
     networks: [gov-net]
     ports:
-      - "6379:6379"
+      - "6380:6379"
     environment:
       TZ: Asia/Shanghai
     command: redis-server --appendonly yes
@@ -118,8 +118,8 @@ services:
     restart: always
     networks: [gov-net]
     ports:
-      - "5672:5672"
-      - "15672:15672"
+      - "5673:5672"
+      - "15673:15672"
     environment:
       RABBITMQ_DEFAULT_USER: guest
       RABBITMQ_DEFAULT_PASS: guest

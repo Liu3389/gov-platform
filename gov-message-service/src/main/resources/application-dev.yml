@@ -38,12 +38,12 @@ spring:
       test-on-return: false
   redis:
     host: localhost
-    port: 6379
+    port: 6380
     database: 9
   # ==================== RabbitMQ ====================
   rabbitmq:
     host: localhost
-    port: 5672
+    port: 5673
     username: guest
     password: guest
     virtual-host: /
