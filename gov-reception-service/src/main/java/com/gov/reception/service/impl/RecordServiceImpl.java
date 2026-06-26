@@ -1,7 +1,6 @@
 package com.gov.reception.service.impl;
 
 import cn.hutool.core.bean.BeanUtil;
-import cn.hutool.core.util.IdUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -12,6 +11,7 @@ import com.gov.reception.dto.RecordQueryDTO;
 import com.gov.reception.dto.RecordSubmitDTO;
 import com.gov.reception.entity.*;
 import com.gov.reception.mapper.RecordMapper;
+import com.gov.reception.mapper.ReceptionLogMapper;
 import com.gov.reception.service.MaterialService;
 import com.gov.reception.service.RecordService;
 import com.gov.reception.vo.MaterialVO;
@@ -24,7 +24,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -37,6 +36,7 @@ import java.util.stream.Collectors;
 public class RecordServiceImpl extends ServiceImpl<RecordMapper, RecordEntity> implements RecordService {
 
     private final MaterialService materialService;
+    private final ReceptionLogMapper receptionLogMapper;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
@@ -56,11 +56,27 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, RecordEntity> i
         entity.setUpdateTime(LocalDateTime.now());
         this.save(entity);
 
-        // 3. 保存申报材料（暂时跳过）
-        // TODO: 保存材料
+        // 3. 保存申报材料
+        if (dto.getMaterials() != null && !dto.getMaterials().isEmpty()) {
+            List<MaterialEntity> materials = dto.getMaterials().stream().map(m -> {
+                MaterialEntity material = new MaterialEntity();
+                material.setRecordId(entity.getId());
+                material.setMaterialName(m.getMaterialName());
+                material.setMaterialType(m.getMaterialType());
+                material.setFileUrl(m.getFileUrl());
+                material.setFileSize(m.getFileSize());
+                material.setFileType(m.getFileType());
+                material.setIsRequired(m.getIsRequired());
+                material.setVerifyStatus(0);
+                material.setCreateTime(LocalDateTime.now());
+                material.setUpdateTime(LocalDateTime.now());
+                return material;
+            }).collect(Collectors.toList());
+            materialService.saveBatch(materials);
+        }
 
-        // 4. 记录日志（暂时跳过）
-        // TODO: 记录日志
+        // 4. 记录日志
+        saveLog(entity.getId(), 1, "提交办件", userId, null);
 
         return getVOById(entity.getId());
     }
@@ -143,7 +159,21 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, RecordEntity> i
         vo.setFinishTime(entity.getFinishTime());
 
         // 查询进度日志
-        // TODO: 查询ReceptionLogEntity列表并转换
+        LambdaQueryWrapper<ReceptionLogEntity> logWrapper = new LambdaQueryWrapper<>();
+        logWrapper.eq(ReceptionLogEntity::getRecordId, id);
+        logWrapper.orderByAsc(ReceptionLogEntity::getOperateTime);
+        List<ReceptionLogEntity> logs = receptionLogMapper.selectList(logWrapper);
+
+        List<RecordProgressVO.ProgressLogVO> logVOs = logs.stream().map(log -> {
+            RecordProgressVO.ProgressLogVO logVO = new RecordProgressVO.ProgressLogVO();
+            logVO.setActionType(log.getActionType());
+            logVO.setActionDesc(log.getActionDesc());
+            logVO.setOperatorName(log.getOperatorName());
+            logVO.setOperateTime(log.getOperateTime());
+            logVO.setRemark(log.getRemark());
+            return logVO;
+        }).collect(Collectors.toList());
+        vo.setLogs(logVOs);
 
         return vo;
     }
@@ -154,7 +184,7 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, RecordEntity> i
         String year = LocalDateTime.now().format(DateTimeFormatter.ofPattern("yyyy"));
         String deptCode = String.format("%02d", deptId % 100);
 
-        // 使用时间戳作为序号（简化实现）
+        // 使用时间戳作为序号
         String timestamp = String.valueOf(System.currentTimeMillis() % 1000000);
         return year + deptCode + String.format("%06d", Long.parseLong(timestamp));
     }
@@ -163,14 +193,16 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, RecordEntity> i
      * 保存办件日志
      */
     private void saveLog(Long recordId, Integer actionType, String actionDesc, Long operatorId, String operatorName) {
-        ReceptionLogEntity log = new ReceptionLogEntity();
-        log.setRecordId(recordId);
-        log.setActionType(actionType);
-        log.setActionDesc(actionDesc);
-        log.setOperatorId(operatorId);
-        log.setOperatorName(operatorName);
-        log.setOperateTime(LocalDateTime.now());
-        // TODO: 保存日志
+        ReceptionLogEntity logEntity = new ReceptionLogEntity();
+        logEntity.setRecordId(recordId);
+        logEntity.setActionType(actionType);
+        logEntity.setActionDesc(actionDesc);
+        logEntity.setOperatorId(operatorId);
+        logEntity.setOperatorName(operatorName);
+        logEntity.setOperateTime(LocalDateTime.now());
+        logEntity.setCreateTime(LocalDateTime.now());
+        logEntity.setUpdateTime(LocalDateTime.now());
+        receptionLogMapper.insert(logEntity);
     }
 
     /**
