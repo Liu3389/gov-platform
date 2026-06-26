@@ -161,15 +161,15 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, RecordEntity> i
         // 查询进度日志
         LambdaQueryWrapper<ReceptionLogEntity> logWrapper = new LambdaQueryWrapper<>();
         logWrapper.eq(ReceptionLogEntity::getRecordId, id);
-        logWrapper.orderByAsc(ReceptionLogEntity::getOperateTime);
+        logWrapper.orderByAsc(ReceptionLogEntity::getActionTime);
         List<ReceptionLogEntity> logs = receptionLogMapper.selectList(logWrapper);
 
         List<RecordProgressVO.ProgressLogVO> logVOs = logs.stream().map(log -> {
             RecordProgressVO.ProgressLogVO logVO = new RecordProgressVO.ProgressLogVO();
-            logVO.setActionType(log.getActionType());
-            logVO.setActionDesc(log.getActionDesc());
+            logVO.setActionType(Integer.parseInt(log.getActionType()));
+            logVO.setActionDesc(log.getRemark());
             logVO.setOperatorName(log.getOperatorName());
-            logVO.setOperateTime(log.getOperateTime());
+            logVO.setOperateTime(log.getActionTime());
             logVO.setRemark(log.getRemark());
             return logVO;
         }).collect(Collectors.toList());
@@ -195,11 +195,11 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, RecordEntity> i
     private void saveLog(Long recordId, Integer actionType, String actionDesc, Long operatorId, String operatorName) {
         ReceptionLogEntity logEntity = new ReceptionLogEntity();
         logEntity.setRecordId(recordId);
-        logEntity.setActionType(actionType);
-        logEntity.setActionDesc(actionDesc);
+        logEntity.setActionType(String.valueOf(actionType));
+        logEntity.setActionTime(LocalDateTime.now());
         logEntity.setOperatorId(operatorId);
         logEntity.setOperatorName(operatorName);
-        logEntity.setOperateTime(LocalDateTime.now());
+        logEntity.setRemark(actionDesc);
         logEntity.setCreateTime(LocalDateTime.now());
         logEntity.setUpdateTime(LocalDateTime.now());
         receptionLogMapper.insert(logEntity);
