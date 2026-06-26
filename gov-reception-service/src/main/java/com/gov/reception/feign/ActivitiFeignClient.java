@@ -2,6 +2,7 @@ package com.gov.reception.feign;
 
 import com.gov.common.result.Result;
 import com.gov.common.vo.WorkflowTaskVO;
+import com.gov.reception.dto.StartProcessDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,6 +14,9 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "gov-activiti-service", path = "/workflow", fallbackFactory = ActivitiFeignFallbackFactory.class)
 public interface ActivitiFeignClient {
 
+    /**
+     * 启动审批流程
+     */
     @PostMapping("/start")
-    Result<WorkflowTaskVO> startProcess(@RequestBody Object startProcessDTO);
+    Result<WorkflowTaskVO> startProcess(@RequestBody StartProcessDTO startProcessDTO);
 }
