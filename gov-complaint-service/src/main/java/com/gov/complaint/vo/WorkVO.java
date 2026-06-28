@@ -27,8 +27,11 @@ public class WorkVO implements Serializable {
     @Schema(description = "投诉人姓名")
     private String userName;
 
-    @Schema(description = "投诉人电话")
+    @Schema(description = "投诉人电话 [脱敏]")
     private String userPhone;
+
+    @Schema(description = "投诉人身份证号 [脱敏]")
+    private String userIdCard;
 
     @Schema(description = "分类ID")
     private Long categoryId;
