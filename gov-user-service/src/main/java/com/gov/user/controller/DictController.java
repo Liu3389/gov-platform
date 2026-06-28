@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @Tag(name = "数据字典管理", description = "数据字典管理接口")
@@ -37,7 +38,7 @@ public class DictController {
     @Operation(summary = "分页查询字典")
     @GetMapping("/page")
     public Result<PageResult<DictVO>> page(
-            @Parameter(description = "页码") @RequestParam(defaultValue = "1") Long pageNum,
+            @Parameter(description = "页码") @Min(1) @RequestParam(defaultValue = "1") Long pageNum,
             @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Max(value = 100, message = "每页最大100条") Long pageSize,
             @Parameter(description = "字典类型") @RequestParam(required = false) String dictType) {
         return Result.success(dictService.pageQueryVO(pageNum, pageSize, dictType));

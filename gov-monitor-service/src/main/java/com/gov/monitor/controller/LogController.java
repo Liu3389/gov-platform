@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.time.LocalDateTime;
 
 @Tag(name = "操作日志", description = "操作日志查询与管理")
@@ -32,7 +33,7 @@ public class LogController {
     @Operation(summary = "分页查询操作日志")
     @GetMapping("/list")
     public Result<PageResult<LogVO>> list(
-            @Parameter(description = "页码") @RequestParam(defaultValue = "1") Long pageNum,
+            @Parameter(description = "页码") @Min(1) @RequestParam(defaultValue = "1") Long pageNum,
             @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Max(value = 100, message = "每页最大100条") Long pageSize) {
         return Result.success(logService.pageQueryVO(pageNum, pageSize));
     }
@@ -40,7 +41,7 @@ public class LogController {
     @Operation(summary = "审计日志查询（按操作时间筛选）")
     @GetMapping("/audit")
     public Result<PageResult<LogVO>> audit(
-            @Parameter(description = "页码") @RequestParam(defaultValue = "1") Long pageNum,
+            @Parameter(description = "页码") @Min(1) @RequestParam(defaultValue = "1") Long pageNum,
             @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Max(value = 100, message = "每页最大100条") Long pageSize,
             @Parameter(description = "操作开始时间") @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime operateStart,
             @Parameter(description = "操作结束时间") @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime operateEnd) {

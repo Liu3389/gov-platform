@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @Tag(name = "角色管理", description = "角色信息管理接口")
@@ -36,7 +37,7 @@ public class RoleController {
     @Operation(summary = "分页查询角色")
     @GetMapping("/page")
     public Result<PageResult<RoleVO>> page(
-            @Parameter(description = "页码") @RequestParam(defaultValue = "1") Long pageNum,
+            @Parameter(description = "页码") @Min(1) @RequestParam(defaultValue = "1") Long pageNum,
             @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Max(value = 100, message = "每页最大100条") Long pageSize,
             @Parameter(description = "角色名称") @RequestParam(required = false) String roleName) {
         return Result.success(roleService.pageQueryVO(pageNum, pageSize, roleName));

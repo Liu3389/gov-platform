@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 /**
  * 公开反馈Controller
@@ -32,7 +33,7 @@ public class FeedbackController {
     @Operation(summary = "分页查询反馈")
     @GetMapping("/list")
     public Result<PageResult<FeedbackVO>> list(
-            @Parameter(description = "页码") @RequestParam(defaultValue = "1") Long pageNum,
+            @Parameter(description = "页码") @Min(1) @RequestParam(defaultValue = "1") Long pageNum,
             @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Max(value = 100, message = "每页最大100条") Long pageSize,
             @Parameter(description = "内容类型") @RequestParam(required = false) Integer contentType,
             @Parameter(description = "内容ID") @RequestParam(required = false) Long contentId,

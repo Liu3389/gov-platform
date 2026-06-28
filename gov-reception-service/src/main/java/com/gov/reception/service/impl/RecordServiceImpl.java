@@ -10,7 +10,7 @@ import com.gov.common.result.PageResult;
 import com.gov.common.result.Result;
 import com.gov.common.vo.ItemVO;
 import com.gov.common.vo.UserVO;
-import com.gov.common.vo.WorkflowTaskVO;
+
 import com.gov.reception.dto.RecordAcceptDTO;
 import com.gov.reception.dto.RecordQueryDTO;
 import com.gov.reception.dto.RecordSubmitDTO;
@@ -167,9 +167,9 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, RecordEntity> i
                 startProcessDTO.setUserName(userName);
 
                 // 调用 Activiti 启动流程
-                Result<WorkflowTaskVO> processResult = activitiFeignClient.startProcess(startProcessDTO);
+                Result<String> processResult = activitiFeignClient.startProcess(startProcessDTO);
                 if (processResult != null && processResult.getData() != null) {
-                    String processInstanceId = processResult.getData().getInstanceId();
+                    String processInstanceId = processResult.getData();
                     entity.setProcessInstanceId(processInstanceId);
                     log.info("[受理] 审批流程启动成功 applyNo={} processInstanceId={}", entity.getApplyNo(), processInstanceId);
                 } else {

@@ -1,7 +1,6 @@
 package com.gov.reception.feign;
 
 import com.gov.common.result.Result;
-import com.gov.common.vo.WorkflowTaskVO;
 import com.gov.reception.dto.StartProcessDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -16,7 +15,8 @@ public interface ActivitiFeignClient {
 
     /**
      * 启动审批流程
+     * 对应接口：POST /workflow/process → 返回 Result<String>（instanceId）
      */
-    @PostMapping("/start")
-    Result<WorkflowTaskVO> startProcess(@RequestBody StartProcessDTO startProcessDTO);
+    @PostMapping("/process")
+    Result<String> startProcess(@RequestBody StartProcessDTO startProcessDTO);
 }

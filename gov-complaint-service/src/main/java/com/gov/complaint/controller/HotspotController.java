@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 @Tag(name = "热点分析", description = "投诉热点分析接口")
 @RestController
@@ -29,7 +30,7 @@ public class HotspotController {
     @Operation(summary = "分页查询热点")
     @GetMapping("/list")
     public Result<PageResult<HotspotVO>> list(
-            @Parameter(description = "页码", example = "1") @RequestParam(defaultValue = "1") Long pageNum,
+            @Parameter(description = "页码", example = "1") @Min(1) @RequestParam(defaultValue = "1") Long pageNum,
             @Parameter(description = "每页大小", example = "10") @RequestParam(defaultValue = "10") @Max(value = 100, message = "每页最大100条") Long pageSize,
             @Parameter(description = "关键词", example = "路灯") @RequestParam(required = false) String keyword) {
         return Result.success(hotspotService.pageQueryVO(pageNum, pageSize, keyword));

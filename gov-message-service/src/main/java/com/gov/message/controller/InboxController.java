@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 /**
  * 站内信管理
@@ -32,7 +33,7 @@ public class InboxController {
     @Operation(summary = "分页查询站内信")
     @GetMapping("/list")
     public Result<PageResult<InboxVO>> list(
-            @Parameter(description = "页码", example = "1") @RequestParam(defaultValue = "1") Long pageNum,
+            @Parameter(description = "页码", example = "1") @Min(1) @RequestParam(defaultValue = "1") Long pageNum,
             @Parameter(description = "每页大小", example = "10") @RequestParam(defaultValue = "10") @Max(value = 100, message = "每页最大100条") Long pageSize,
             @Parameter(description = "用户ID", example = "100") @RequestParam(required = false) Long userId,
             @Parameter(description = "是否已读", example = "0") @RequestParam(required = false) Integer isRead) {

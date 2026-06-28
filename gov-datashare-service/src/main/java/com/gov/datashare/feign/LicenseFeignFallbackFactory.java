@@ -22,11 +22,6 @@ public class LicenseFeignFallbackFactory implements FallbackFactory<LicenseFeign
             public Result<LicenseVO> getById(Long id) {
                 return SentinelBlockHandler.<LicenseVO>blockHandler("license-service", "getById");
             }
-
-            @Override
-            public Result<LicenseVO> getByApplyNo(String applyNo) {
-                return SentinelBlockHandler.<LicenseVO>blockHandler("license-service", "getByApplyNo");
-            }
         };
     }
 }
