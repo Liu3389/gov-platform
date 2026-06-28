@@ -1,4 +1,13 @@
-﻿﻿$token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxIiwidXNlcm5hbWUiOiJhZG1pbiIsImlzcyI6Imdvdi1wbGF0Zm9ybSIsInJvbGVzIjoiUk9MRV9BRE1JTiIsImlhdCI6MTc4MjM3MzYzMSwiZXhwIjoxNzgyMzgwODMxfQ.lJBL7iE9eYLDhoqB_wwaw_DaHsBBaRvDUn9sJgsP5Z0"
+# 动态生成 JWT Token
+$token = python3 -c @"
+import hmac, hashlib, base64, json, time
+h = {'alg':'HS256','typ':'JWT'}
+p = {'sub':'1','username':'admin','roles':'ROLE_ADMIN','iss':'gov-platform','iat':int(time.time()),'exp':int(time.time())+7200}
+def e(d): return base64.urlsafe_b64encode(json.dumps(d,separators=(',',':')).encode()).rstrip(b'=').decode()
+hb, pb = e(h), e(p)
+s = hmac.new('GovPlatformSecretKey2024ForJwtTokenGenerationAndValidation'.encode(),f'{hb}.{pb}'.encode(),hashlib.sha256).digest()
+print(f'{hb}.{pb}.{base64.urlsafe_b64encode(s).rstrip(b\"=\").decode()}')
+"@
 $headers = @{ "Authorization" = "Bearer $token"; "Content-Type" = "application/json" }
 $base = "http://localhost:8091/api/v1/complaint"
 $results = @()

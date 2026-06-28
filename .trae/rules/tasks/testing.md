@@ -156,3 +156,40 @@ Token: <前20字符>...
 
 请按测试规则生成 Token 并测试我模块的所有接口，输出测试报告。
 ```
+
+---
+
+## 前端测试（成员E）
+
+前端测试分为两层：
+
+### 1. 冒烟测试（每次启动后）
+
+```bash
+# 启动后端（如未启动）
+cd gov-platform-parent && mvn spring-boot:run -pl gov-gateway,gov-user-service
+
+# 运行冒烟测试
+python3 _test_all.py
+```
+
+预期：全部 PASS（鉴权、用户、事项基础接口）
+
+### 2. 手动功能测试（开发中）
+
+| 场景 | 操作 | 验证点 |
+|------|------|--------|
+| 登录页 | 输入用户名密码 → 点击登录 | Token 存入 localStorage，跳转首页 |
+| 未登录拦截 | 直接访问 `/dashboard` | 重定向到 `/login` |
+| API 调用 | 打开 Network 面板，操作任意列表页 | 请求带 `Authorization: Bearer <token>` |
+| Token 过期 | 修改 Token 为过期值 → 请求列表 | 返回 401，跳转登录页 |
+| 分页 | 切换页码/每页条数 | URL 参数正确，列表刷新 |
+
+### 3. E2E 测试（建议 Playwright）
+
+```bash
+cd gov-frontend
+npx playwright test
+```
+
+测试用例覆盖：登录 → 列表 → 详情 → 退出 完整流程。

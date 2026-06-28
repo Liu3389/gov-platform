@@ -90,3 +90,22 @@ private static final List<String> WHITE_LIST_PREFIX = Arrays.asList(
 4. 业务路由的 `StripPrefix` 固定为 2（剥 `/api/v1/`）
 5. 网关端口 8091，不要改
 6. Knife4j 必须 `manual` 模式，禁止 `discover`
+
+## 前端跨域（CORS）配置
+
+前端（gov-frontend，端口 5173）需要跨域访问网关 API。在网关配置文件中添加：
+
+```yaml
+spring:
+  cloud:
+    gateway:
+      globalcors:
+        cors-configurations:
+          '[/**]':
+            allowedOriginPatterns: "http://localhost:5173"
+            allowedMethods: "*"
+            allowedHeaders: "*"
+            allowCredentials: true
+```
+
+> `allowCredentials: true` 时不能用 `allowedOrigins: "*"`，必须用 `allowedOriginPatterns`。
