@@ -12,6 +12,7 @@ import com.gov.open.entity.NoticeEntity;
 import com.gov.open.mapper.NoticeMapper;
 import com.gov.open.service.NoticeService;
 import com.gov.open.vo.NoticeVO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -24,11 +25,13 @@ import java.util.stream.Collectors;
  * 通知公告Service实现
  */
 @Service
+@RequiredArgsConstructor
 public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, NoticeEntity> implements NoticeService {
 
     @Override
     public PageResult<NoticeVO> pageQueryVO(Long pageNum, Long pageSize, NoticeQueryDTO queryDTO) {
         LambdaQueryWrapper<NoticeEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(NoticeEntity::getDeleted, 0);
         wrapper.like(queryDTO.getKeyword() != null, NoticeEntity::getTitle, queryDTO.getKeyword());
         wrapper.eq(queryDTO.getStatus() != null, NoticeEntity::getStatus, String.valueOf(queryDTO.getStatus()));
         wrapper.orderByDesc(NoticeEntity::getTopFlag);
@@ -60,7 +63,7 @@ public class NoticeServiceImpl extends ServiceImpl<NoticeMapper, NoticeEntity> i
         entity.setNoticeCode(generateNoticeCode());
         entity.setPublishDeptId(publishDeptId);
         entity.setPublishUserId(1L); // 默认用户ID
-        entity.setPublishTime(LocalDateTime.now()); // 设置发布时间
+        entity.setPublishTime(LocalDateTime.now()); // DB NOT NULL约束，发布时更新为实际发布时间
         entity.setViewCount(0);
         if (entity.getTopFlag() == null) {
             entity.setTopFlag(0);

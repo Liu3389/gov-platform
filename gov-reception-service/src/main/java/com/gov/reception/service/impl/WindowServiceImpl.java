@@ -6,15 +6,16 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gov.common.exception.BusinessException;
 import com.gov.common.result.PageResult;
+import com.gov.reception.dto.WindowDTO;
 import com.gov.reception.entity.WindowEntity;
 import com.gov.reception.mapper.WindowMapper;
 import com.gov.reception.service.WindowService;
 import com.gov.reception.vo.WindowVO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,11 +23,13 @@ import java.util.stream.Collectors;
  * 窗口Service实现
  */
 @Service
+@RequiredArgsConstructor
 public class WindowServiceImpl extends ServiceImpl<WindowMapper, WindowEntity> implements WindowService {
 
     @Override
     public PageResult<WindowVO> pageQueryVO(Long pageNum, Long pageSize, Long deptId, String status) {
         LambdaQueryWrapper<WindowEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(WindowEntity::getDeleted, 0);
         wrapper.eq(deptId != null, WindowEntity::getDeptId, deptId);
         wrapper.eq(status != null, WindowEntity::getStatus, status);
         wrapper.orderByDesc(WindowEntity::getCreateTime);
@@ -50,13 +53,15 @@ public class WindowServiceImpl extends ServiceImpl<WindowMapper, WindowEntity> i
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void addWindow(WindowEntity entity) {
-        // 检查窗口编号是否重复
+    public void addWindow(WindowDTO dto) {
+        // 检查窗口编号是否重复（含已删除记录，因DB UNIQUE约束不区分逻辑删除）
         LambdaQueryWrapper<WindowEntity> wrapper = new LambdaQueryWrapper<>();
-        wrapper.eq(WindowEntity::getWindowNo, entity.getWindowNo());
+        wrapper.eq(WindowEntity::getWindowNo, dto.getWindowNo());
         if (this.count(wrapper) > 0) {
             throw new BusinessException(400, "窗口编号已存在");
         }
+
+        WindowEntity entity = dto.toEntity();
         entity.setCreateTime(LocalDateTime.now());
         entity.setUpdateTime(LocalDateTime.now());
         this.save(entity);
@@ -64,23 +69,24 @@ public class WindowServiceImpl extends ServiceImpl<WindowMapper, WindowEntity> i
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void updateWindow(WindowEntity entity) {
-        WindowEntity exist = this.getById(entity.getId());
+    public void updateWindow(WindowDTO dto, Long id) {
+        WindowEntity exist = this.getById(id);
         if (exist == null || exist.getDeleted() == 1) {
             throw new BusinessException(404, "窗口不存在");
         }
 
-        // 如果修改了编号，检查是否重复
-        if (!exist.getWindowNo().equals(entity.getWindowNo())) {
+        // 如果修改了编号，检查是否重复（含已删除记录）
+        if (!exist.getWindowNo().equals(dto.getWindowNo())) {
             LambdaQueryWrapper<WindowEntity> wrapper = new LambdaQueryWrapper<>();
-            wrapper.eq(WindowEntity::getWindowNo, entity.getWindowNo());
-            wrapper.ne(WindowEntity::getId, entity.getId());
+            wrapper.eq(WindowEntity::getWindowNo, dto.getWindowNo());
+            wrapper.ne(WindowEntity::getId, id);
             if (this.count(wrapper) > 0) {
                 throw new BusinessException(400, "窗口编号已存在");
             }
         }
 
-        this.updateById(entity);
+        BeanUtil.copyProperties(dto, exist, "id", "createTime", "createBy", "deleted");
+        this.updateById(exist);
     }
 
     /**

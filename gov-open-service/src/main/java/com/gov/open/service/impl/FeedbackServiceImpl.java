@@ -6,10 +6,12 @@ import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gov.common.exception.BusinessException;
 import com.gov.common.result.PageResult;
+import com.gov.open.dto.FeedbackDTO;
 import com.gov.open.entity.FeedbackEntity;
 import com.gov.open.mapper.FeedbackMapper;
 import com.gov.open.service.FeedbackService;
 import com.gov.open.vo.FeedbackVO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,11 +23,13 @@ import java.util.stream.Collectors;
  * 公开反馈Service实现
  */
 @Service
+@RequiredArgsConstructor
 public class FeedbackServiceImpl extends ServiceImpl<FeedbackMapper, FeedbackEntity> implements FeedbackService {
 
     @Override
     public PageResult<FeedbackVO> pageQueryVO(Long pageNum, Long pageSize, Integer contentType, Long contentId, Integer status) {
         LambdaQueryWrapper<FeedbackEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(FeedbackEntity::getDeleted, 0);
         wrapper.eq(contentType != null, FeedbackEntity::getContentType, String.valueOf(contentType));
         wrapper.eq(contentId != null, FeedbackEntity::getContentId, contentId);
         wrapper.eq(status != null, FeedbackEntity::getStatus, String.valueOf(status));
@@ -50,11 +54,9 @@ public class FeedbackServiceImpl extends ServiceImpl<FeedbackMapper, FeedbackEnt
 
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void submitFeedback(FeedbackEntity entity) {
-        // 设置默认值
-        if (entity.getUserId() == null) {
-            entity.setUserId(1L); // 默认用户ID
-        }
+    public void submitFeedback(FeedbackDTO dto, Long userId) {
+        FeedbackEntity entity = dto.toEntity();
+        entity.setUserId(userId);
         entity.setStatus("0"); // 待处理
         entity.setCreateTime(LocalDateTime.now());
         entity.setUpdateTime(LocalDateTime.now());

@@ -27,4 +27,18 @@ public class MaterialDTO {
 
     @Schema(description = "是否必须：0否 1是")
     private Integer isRequired;
+
+    /**
+     * 转为 Entity
+     */
+    public com.gov.reception.entity.MaterialEntity toEntity() {
+        com.gov.reception.entity.MaterialEntity entity = new com.gov.reception.entity.MaterialEntity();
+        entity.setMaterialName(this.materialName);
+        entity.setMaterialType(this.materialType);
+        entity.setFileUrl(this.fileUrl);
+        entity.setFileSize(this.fileSize);
+        entity.setFileType(this.fileType);
+        entity.setIsRequired(this.isRequired);
+        return entity;
+    }
 }

@@ -1,6 +1,7 @@
 package com.gov.open.controller;
 
 import com.gov.common.annotation.Log;
+import com.gov.common.annotation.RequirePermission;
 import com.gov.common.result.Result;
 import com.gov.open.dto.CatalogDTO;
 import com.gov.open.service.CatalogService;
@@ -46,6 +47,7 @@ public class CatalogController {
 
     @Operation(summary = "新增目录")
     @Log(module = "公开目录", action = "新增目录")
+    @RequirePermission(value = "open:catalog:add")
     @PostMapping
     public Result<Void> add(@Valid @RequestBody CatalogDTO dto) {
         catalogService.addCatalog(dto);
@@ -54,6 +56,7 @@ public class CatalogController {
 
     @Operation(summary = "修改目录")
     @Log(module = "公开目录", action = "修改目录")
+    @RequirePermission(value = "open:catalog:edit")
     @PutMapping("/{id}")
     public Result<Void> update(
             @Parameter(description = "目录ID") @PathVariable Long id,
@@ -64,6 +67,7 @@ public class CatalogController {
 
     @Operation(summary = "删除目录")
     @Log(module = "公开目录", action = "删除目录")
+    @RequirePermission(value = "open:catalog:delete")
     @DeleteMapping("/{id}")
     public Result<Void> delete(@Parameter(description = "目录ID") @PathVariable Long id) {
         catalogService.deleteCatalog(id);

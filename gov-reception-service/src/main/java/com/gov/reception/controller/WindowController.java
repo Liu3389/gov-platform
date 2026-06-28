@@ -1,9 +1,10 @@
 package com.gov.reception.controller;
 
 import com.gov.common.annotation.Log;
+import com.gov.common.annotation.RequirePermission;
 import com.gov.common.result.PageResult;
 import com.gov.common.result.Result;
-import com.gov.reception.entity.WindowEntity;
+import com.gov.reception.dto.WindowDTO;
 import com.gov.reception.service.WindowService;
 import com.gov.reception.vo.WindowVO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -50,22 +51,27 @@ public class WindowController {
 
     @Operation(summary = "新增窗口")
     @Log(module = "窗口管理", action = "新增窗口")
+    @RequirePermission(value = "reception:window:add")
     @PostMapping
-    public Result<Void> add(@Valid @RequestBody WindowEntity entity) {
-        windowService.addWindow(entity);
+    public Result<Void> add(@Valid @RequestBody WindowDTO dto) {
+        windowService.addWindow(dto);
         return Result.success();
     }
 
     @Operation(summary = "修改窗口")
     @Log(module = "窗口管理", action = "修改窗口")
-    @PutMapping
-    public Result<Void> update(@Valid @RequestBody WindowEntity entity) {
-        windowService.updateWindow(entity);
+    @RequirePermission(value = "reception:window:edit")
+    @PutMapping("/{id}")
+    public Result<Void> update(
+            @Parameter(description = "窗口ID") @PathVariable Long id,
+            @Valid @RequestBody WindowDTO dto) {
+        windowService.updateWindow(dto, id);
         return Result.success();
     }
 
     @Operation(summary = "删除窗口")
     @Log(module = "窗口管理", action = "删除窗口")
+    @RequirePermission(value = "reception:window:delete")
     @DeleteMapping("/{id}")
     public Result<Void> delete(@Parameter(description = "窗口ID") @PathVariable Long id) {
         windowService.removeById(id);

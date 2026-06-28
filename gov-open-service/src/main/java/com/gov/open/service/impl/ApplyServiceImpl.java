@@ -11,6 +11,7 @@ import com.gov.open.entity.ApplyEntity;
 import com.gov.open.mapper.ApplyMapper;
 import com.gov.open.service.ApplyService;
 import com.gov.open.vo.ApplyVO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,11 +24,13 @@ import java.util.stream.Collectors;
  * 依申请公开Service实现
  */
 @Service
+@RequiredArgsConstructor
 public class ApplyServiceImpl extends ServiceImpl<ApplyMapper, ApplyEntity> implements ApplyService {
 
     @Override
     public PageResult<ApplyVO> pageQueryVO(Long pageNum, Long pageSize, Integer status) {
         LambdaQueryWrapper<ApplyEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(ApplyEntity::getDeleted, 0);
         wrapper.eq(status != null, ApplyEntity::getStatus, String.valueOf(status));
         wrapper.orderByDesc(ApplyEntity::getCreateTime);
 
@@ -110,7 +113,7 @@ public class ApplyServiceImpl extends ServiceImpl<ApplyMapper, ApplyEntity> impl
             throw new BusinessException(404, "申请不存在");
         }
 
-        entity.setApplyReason(rejectReason);
+        entity.setRejectReason(rejectReason);
         entity.setStatus("3"); // 不予公开
 
         this.updateById(entity);

@@ -28,4 +28,17 @@ public class WindowDTO {
 
     @Schema(description = "状态：0关闭 1开放 2暂停")
     private String status;
+
+    /**
+     * 转为 Entity
+     */
+    public com.gov.reception.entity.WindowEntity toEntity() {
+        com.gov.reception.entity.WindowEntity entity = new com.gov.reception.entity.WindowEntity();
+        entity.setWindowNo(this.windowNo);
+        entity.setWindowName(this.windowName);
+        entity.setDeptId(this.deptId);
+        entity.setStaffId(this.staffId);
+        entity.setStatus(this.status);
+        return entity;
+    }
 }

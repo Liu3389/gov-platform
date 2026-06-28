@@ -29,4 +29,15 @@ public class RecordSubmitDTO {
 
     @Schema(description = "备注")
     private String remark;
+
+    /**
+     * 转为 Entity
+     */
+    public com.gov.reception.entity.RecordEntity toEntity() {
+        com.gov.reception.entity.RecordEntity entity = new com.gov.reception.entity.RecordEntity();
+        entity.setItemId(this.itemId);
+        entity.setDeptId(this.deptId);
+        entity.setRemark(this.remark);
+        return entity;
+    }
 }
