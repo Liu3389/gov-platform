@@ -17,33 +17,33 @@ request.interceptors.request.use(
     }
     return config
   },
-  error => {
-    return Promise.reject(error)
-  }
+  error => Promise.reject(error)
 )
 
 request.interceptors.response.use(
   response => {
     const res = response.data
+    // 业务错误
     if (res.code && res.code !== 200) {
-      ElMessage.error(res.message || '请求失败')
       return Promise.reject(new Error(res.message || '请求失败'))
     }
     return res.data !== undefined ? res.data : res
   },
   error => {
     if (error.response) {
-      const { status } = error.response
+      const { status, config } = error.response
       if (status === 401) {
         const userStore = useUserStore()
         userStore.logout()
         router.push('/login')
         ElMessage.error('登录已过期，请重新登录')
-      } else {
-        ElMessage.error(error.response.data?.message || '网络错误')
+        return Promise.reject(error)
       }
+      // 非 401 静默 reject，控制台可见调试
+      console.error(`[request] ${status} ${config?.url}`, error.response.data)
     } else {
-      ElMessage.error('网络连接异常')
+      // 网络错误（后端没启动/连接拒绝）
+      console.error(`[request] NETWORK ERROR: ${error.config?.url} — 后端可能未启动`, error.message)
     }
     return Promise.reject(error)
   }
