@@ -5,11 +5,13 @@ import cn.hutool.core.util.StrUtil;
 import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.gov.activiti.dto.LicenseGenerateDTO;
 import com.gov.activiti.dto.ProcessStartDTO;
 import com.gov.activiti.dto.TaskCompleteDTO;
 import com.gov.activiti.dto.TaskDelegateDTO;
 import com.gov.activiti.dto.TaskRemindDTO;
 import com.gov.activiti.entity.*;
+import com.gov.activiti.feign.LicenseFeignClient;
 import com.gov.activiti.mapper.*;
 import com.gov.activiti.service.WorkflowTaskService;
 import com.gov.activiti.vo.OpinionVO;
@@ -18,6 +20,8 @@ import com.gov.activiti.vo.TodoTaskVO;
 import com.gov.common.constant.WorkflowConstants;
 import com.gov.common.exception.BusinessException;
 import com.gov.common.result.PageResult;
+import com.gov.common.result.Result;
+import com.gov.common.vo.LicenseVO;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.activiti.engine.RepositoryService;
@@ -51,6 +55,7 @@ public class WorkflowTaskServiceImpl extends ServiceImpl<WorkflowTaskMapper, Wor
   private final WorkflowOpinionMapper workflowOpinionMapper;
   private final WorkflowReminderMapper workflowReminderMapper;
   private final WorkflowDelegateMapper workflowDelegateMapper;
+  private final LicenseFeignClient licenseFeignClient;
 
   /**
    * 启动时自动部署 BPMN 流程定义
@@ -208,6 +213,41 @@ public class WorkflowTaskServiceImpl extends ServiceImpl<WorkflowTaskMapper, Wor
     // 同步下一个任务
     String instanceId = task.getProcessInstanceId();
     syncCurrentTask(instanceId, task.getProcessDefinitionId());
+
+    // ★ 判断流程是否结束（最后一个审批节点通过后生成证照）
+    ProcessInstance pi = runtimeService.createProcessInstanceQuery()
+        .processInstanceId(instanceId).singleResult();
+    if (pi == null && WorkflowConstants.APPROVAL_PASS == Integer.parseInt(dto.getApprovalResult())) {
+      // 流程已结束且审批通过 → 调用证照服务生成证照
+      WorkflowInstanceEntity instance = getByInstanceId(instanceId);
+      if (instance != null) {
+        LicenseGenerateDTO licenseDTO = new LicenseGenerateDTO();
+        licenseDTO.setApplyNo(instance.getApplyNo());
+        licenseDTO.setUserId(instance.getUserId());
+        licenseDTO.setItemId(instance.getItemId());
+        licenseDTO.setItemName(instance.getItemName());
+        licenseDTO.setUserName(instance.getUserName());
+        licenseDTO.setCatalogCode("ID_CARD");
+
+        try {
+          Result<LicenseVO> result = licenseFeignClient.generate(licenseDTO);
+          log.info("证照生成结果：code={}, data={}", result.getCode(), result.getData());
+        } catch (Exception e) {
+          log.error("调用证照服务失败（不阻塞审批）：applyNo={}, error={}",
+              instance.getApplyNo(), e.getMessage(), e);
+        }
+
+        // 更新流程实例为办结
+        instance.setStatus("1");
+        instance.setEndTime(LocalDateTime.now());
+        if (instance.getStartTime() != null) {
+          instance.setDuration(java.time.Duration.between(instance.getStartTime(), LocalDateTime.now()).toMillis());
+        }
+        instance.setResult("APPROVED");
+        workflowInstanceMapper.updateById(instance);
+        log.info("流程办结：instanceId={}, applyNo={}", instanceId, instance.getApplyNo());
+      }
+    }
   }
 
   @Override
