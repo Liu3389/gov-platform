@@ -27,4 +27,17 @@ public class NoticeDTO {
 
     @Schema(description = "状态：0草稿 1已发布")
     private String status;
+
+    /**
+     * 转为 Entity
+     */
+    public com.gov.open.entity.NoticeEntity toEntity() {
+        com.gov.open.entity.NoticeEntity entity = new com.gov.open.entity.NoticeEntity();
+        entity.setTitle(this.title);
+        entity.setContent(this.content);
+        entity.setNoticeType(this.noticeType);
+        entity.setTopFlag(this.topFlag);
+        entity.setStatus(this.status);
+        return entity;
+    }
 }

@@ -2,6 +2,7 @@ package com.gov.reception.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.gov.common.result.PageResult;
+import com.gov.reception.dto.WindowDTO;
 import com.gov.reception.entity.WindowEntity;
 import com.gov.reception.vo.WindowVO;
 
@@ -23,10 +24,10 @@ public interface WindowService extends IService<WindowEntity> {
     /**
      * 新增窗口
      */
-    void addWindow(WindowEntity entity);
+    void addWindow(WindowDTO dto);
 
     /**
      * 更新窗口
      */
-    void updateWindow(WindowEntity entity);
+    void updateWindow(WindowDTO dto, Long id);
 }

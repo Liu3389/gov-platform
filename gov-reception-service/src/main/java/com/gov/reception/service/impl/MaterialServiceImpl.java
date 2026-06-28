@@ -8,6 +8,7 @@ import com.gov.reception.entity.MaterialEntity;
 import com.gov.reception.mapper.MaterialMapper;
 import com.gov.reception.service.MaterialService;
 import com.gov.reception.vo.MaterialVO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,11 +20,13 @@ import java.util.stream.Collectors;
  * 申报材料Service实现
  */
 @Service
+@RequiredArgsConstructor
 public class MaterialServiceImpl extends ServiceImpl<MaterialMapper, MaterialEntity> implements MaterialService {
 
     @Override
     public List<MaterialVO> listByRecordId(Long recordId) {
         LambdaQueryWrapper<MaterialEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(MaterialEntity::getDeleted, 0);
         wrapper.eq(MaterialEntity::getRecordId, recordId);
         wrapper.orderByDesc(MaterialEntity::getCreateTime);
 

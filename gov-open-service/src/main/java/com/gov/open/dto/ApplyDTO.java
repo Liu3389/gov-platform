@@ -24,4 +24,16 @@ public class ApplyDTO {
 
     @Schema(description = "部门ID")
     private Long deptId;
+
+    /**
+     * 转为 Entity
+     */
+    public com.gov.open.entity.ApplyEntity toEntity() {
+        com.gov.open.entity.ApplyEntity entity = new com.gov.open.entity.ApplyEntity();
+        entity.setApplyContent(this.applyContent);
+        entity.setApplyReason(this.applyReason);
+        entity.setApplyType(this.applyType);
+        entity.setDeptId(this.deptId);
+        return entity;
+    }
 }

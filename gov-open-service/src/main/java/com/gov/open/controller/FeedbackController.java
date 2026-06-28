@@ -1,9 +1,10 @@
 package com.gov.open.controller;
 
 import com.gov.common.annotation.Log;
+import com.gov.common.annotation.RequirePermission;
 import com.gov.common.result.PageResult;
 import com.gov.common.result.Result;
-import com.gov.open.entity.FeedbackEntity;
+import com.gov.open.dto.FeedbackDTO;
 import com.gov.open.service.FeedbackService;
 import com.gov.open.vo.FeedbackVO;
 import io.swagger.v3.oas.annotations.Operation;
@@ -54,15 +55,15 @@ public class FeedbackController {
     @PostMapping("/submit")
     public Result<Void> submit(
             @Parameter(description = "用户ID") @RequestHeader(value = "X-User-Id", required = false) Long userId,
-            @Valid @RequestBody FeedbackEntity entity) {
+            @Valid @RequestBody FeedbackDTO dto) {
         if (userId == null) userId = 1L;
-        entity.setUserId(userId);
-        feedbackService.submitFeedback(entity);
+        feedbackService.submitFeedback(dto, userId);
         return Result.success();
     }
 
     @Operation(summary = "回复反馈")
     @Log(module = "公开反馈", action = "回复反馈")
+    @RequirePermission(value = "open:feedback:reply")
     @PostMapping("/reply/{id}")
     public Result<Void> reply(
             @Parameter(description = "反馈ID") @PathVariable Long id,
@@ -75,6 +76,7 @@ public class FeedbackController {
 
     @Operation(summary = "关闭反馈")
     @Log(module = "公开反馈", action = "关闭反馈")
+    @RequirePermission(value = "open:feedback:close")
     @PostMapping("/close/{id}")
     public Result<Void> close(@Parameter(description = "反馈ID") @PathVariable Long id) {
         feedbackService.closeFeedback(id);

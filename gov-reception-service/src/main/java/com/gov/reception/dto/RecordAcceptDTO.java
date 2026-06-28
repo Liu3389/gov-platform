@@ -28,4 +28,15 @@ public class RecordAcceptDTO {
 
     @Schema(description = "备注")
     private String remark;
+
+    /**
+     * 转为 Entity
+     */
+    public com.gov.reception.entity.RecordEntity toEntity() {
+        com.gov.reception.entity.RecordEntity entity = new com.gov.reception.entity.RecordEntity();
+        entity.setId(this.recordId);
+        entity.setWindowId(this.windowId);
+        entity.setRejectReason(this.rejectReason);
+        return entity;
+    }
 }

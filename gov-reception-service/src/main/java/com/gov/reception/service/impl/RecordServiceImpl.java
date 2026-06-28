@@ -5,11 +5,19 @@ import com.baomidou.mybatisplus.core.conditions.query.LambdaQueryWrapper;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gov.common.exception.BusinessException;
+import com.gov.common.feign.UserFeignClient;
 import com.gov.common.result.PageResult;
+import com.gov.common.result.Result;
+import com.gov.common.vo.ItemVO;
+import com.gov.common.vo.UserVO;
+import com.gov.common.vo.WorkflowTaskVO;
 import com.gov.reception.dto.RecordAcceptDTO;
 import com.gov.reception.dto.RecordQueryDTO;
 import com.gov.reception.dto.RecordSubmitDTO;
+import com.gov.reception.dto.StartProcessDTO;
 import com.gov.reception.entity.*;
+import com.gov.reception.feign.ActivitiFeignClient;
+import com.gov.reception.feign.ItemFeignClient;
 import com.gov.reception.mapper.RecordMapper;
 import com.gov.reception.mapper.ReceptionLogMapper;
 import com.gov.reception.service.MaterialService;
@@ -37,26 +45,41 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, RecordEntity> i
 
     private final MaterialService materialService;
     private final ReceptionLogMapper receptionLogMapper;
+    private final ItemFeignClient itemFeignClient;
+    private final ActivitiFeignClient activitiFeignClient;
+    private final UserFeignClient userFeignClient;
 
     @Override
     @Transactional(rollbackFor = Exception.class)
     public RecordVO submitRecord(RecordSubmitDTO dto, Long userId) {
-        // 1. 生成办件号
+        // 1. 通过 Feign 查询事项信息（捕获所有异常，Feign故障不阻塞提交）
+        ItemVO itemVO = null;
+        try {
+            Result<ItemVO> itemResult = itemFeignClient.getById(dto.getItemId());
+            itemVO = (itemResult != null) ? itemResult.getData() : null;
+        } catch (Exception e) {
+            log.error("[提交办件] 查询事项信息失败 itemId={}", dto.getItemId(), e);
+        }
+        if (itemVO == null) {
+            throw new BusinessException(404, "事项不存在");
+        }
+
+        // 2. 生成办件号
         String applyNo = generateApplyNo(dto.getDeptId());
 
-        // 2. 创建办件记录
+        // 3. 创建办件记录
         RecordEntity entity = new RecordEntity();
         entity.setApplyNo(applyNo);
         entity.setItemId(dto.getItemId());
         entity.setUserId(userId);
-        entity.setDeptId(dto.getDeptId());
+        entity.setDeptId(itemVO.getDeptId() != null ? itemVO.getDeptId() : dto.getDeptId());
         entity.setStatus("0"); // 待受理
         entity.setRemark(dto.getRemark());
         entity.setCreateTime(LocalDateTime.now());
         entity.setUpdateTime(LocalDateTime.now());
         this.save(entity);
 
-        // 3. 保存申报材料
+        // 4. 保存申报材料
         if (dto.getMaterials() != null && !dto.getMaterials().isEmpty()) {
             List<MaterialEntity> materials = dto.getMaterials().stream().map(m -> {
                 MaterialEntity material = new MaterialEntity();
@@ -75,7 +98,7 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, RecordEntity> i
             materialService.saveBatch(materials);
         }
 
-        // 4. 记录日志
+        // 5. 记录日志
         saveLog(entity.getId(), 1, "提交办件", userId, null);
 
         return getVOById(entity.getId());
@@ -99,6 +122,64 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, RecordEntity> i
             entity.setOperatorId(operatorId);
             entity.setAcceptTime(LocalDateTime.now());
             saveLog(entity.getId(), 2, "受理通过", operatorId, operatorName);
+
+            // ★ 核心：受理通过后启动审批流程
+            try {
+                // 获取事项信息
+                String itemName = null;
+                Long deptId = entity.getDeptId();
+                try {
+                    Result<ItemVO> itemResult = itemFeignClient.getById(entity.getItemId());
+                    if (itemResult != null && itemResult.getData() != null) {
+                        itemName = itemResult.getData().getItemName();
+                        if (itemResult.getData().getDeptId() != null) {
+                            deptId = itemResult.getData().getDeptId();
+                        }
+                    }
+                } catch (Exception e) {
+                    log.warn("[受理] 查询事项信息失败，使用默认值 itemId={}", entity.getItemId(), e);
+                    itemName = "事项" + entity.getItemId();
+                }
+
+                // 获取用户姓名
+                String userName = null;
+                try {
+                    Result<UserVO> userResult = userFeignClient.getById(entity.getUserId());
+                    if (userResult != null && userResult.getData() != null) {
+                        userName = userResult.getData().getRealName();
+                        if (userName == null) {
+                            userName = userResult.getData().getUsername();
+                        }
+                    }
+                } catch (Exception e) {
+                    log.warn("[受理] 查询用户信息失败，使用默认值 userId={}", entity.getUserId(), e);
+                    userName = "用户" + entity.getUserId();
+                }
+
+                // 构建启动流程参数
+                StartProcessDTO startProcessDTO = new StartProcessDTO();
+                startProcessDTO.setProcessKey("apply_approval_v1");
+                startProcessDTO.setApplyNo(entity.getApplyNo());
+                startProcessDTO.setUserId(entity.getUserId());
+                startProcessDTO.setDeptId(deptId);
+                startProcessDTO.setItemId(entity.getItemId());
+                startProcessDTO.setItemName(itemName);
+                startProcessDTO.setUserName(userName);
+
+                // 调用 Activiti 启动流程
+                Result<WorkflowTaskVO> processResult = activitiFeignClient.startProcess(startProcessDTO);
+                if (processResult != null && processResult.getData() != null) {
+                    String processInstanceId = processResult.getData().getInstanceId();
+                    entity.setProcessInstanceId(processInstanceId);
+                    log.info("[受理] 审批流程启动成功 applyNo={} processInstanceId={}", entity.getApplyNo(), processInstanceId);
+                } else {
+                    log.warn("[受理] 审批流程启动返回空结果 applyNo={}", entity.getApplyNo());
+                }
+            } catch (Exception e) {
+                // Feign 调用失败不阻塞受理（fallback 已降级）
+                log.error("[受理] 启动审批流程失败，但不阻塞受理 applyNo={}", entity.getApplyNo(), e);
+                saveLog(entity.getId(), 0, "流程启动失败：" + e.getMessage(), operatorId, operatorName);
+            }
         } else {
             // 受理驳回
             entity.setStatus("4");
@@ -112,6 +193,7 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, RecordEntity> i
     @Override
     public PageResult<RecordVO> pageQueryVO(Long pageNum, Long pageSize, RecordQueryDTO queryDTO) {
         LambdaQueryWrapper<RecordEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(RecordEntity::getDeleted, 0);
         wrapper.like(queryDTO.getApplyNo() != null, RecordEntity::getApplyNo, queryDTO.getApplyNo());
         wrapper.eq(queryDTO.getItemId() != null, RecordEntity::getItemId, queryDTO.getItemId());
         wrapper.eq(queryDTO.getUserId() != null, RecordEntity::getUserId, queryDTO.getUserId());
@@ -160,6 +242,7 @@ public class RecordServiceImpl extends ServiceImpl<RecordMapper, RecordEntity> i
 
         // 查询进度日志
         LambdaQueryWrapper<ReceptionLogEntity> logWrapper = new LambdaQueryWrapper<>();
+        logWrapper.eq(ReceptionLogEntity::getDeleted, 0);
         logWrapper.eq(ReceptionLogEntity::getRecordId, id);
         logWrapper.orderByAsc(ReceptionLogEntity::getActionTime);
         List<ReceptionLogEntity> logs = receptionLogMapper.selectList(logWrapper);

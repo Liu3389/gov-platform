@@ -32,6 +32,7 @@ public class QueueServiceImpl extends ServiceImpl<QueueMapper, QueueEntity> impl
     @Override
     public PageResult<QueueVO> pageQueryVO(Long pageNum, Long pageSize, Long windowId, Integer status) {
         LambdaQueryWrapper<QueueEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(QueueEntity::getDeleted, 0);
         wrapper.eq(windowId != null, QueueEntity::getWindowId, windowId);
         wrapper.eq(status != null, QueueEntity::getStatus, String.valueOf(status));
         wrapper.orderByDesc(QueueEntity::getCreateTime);

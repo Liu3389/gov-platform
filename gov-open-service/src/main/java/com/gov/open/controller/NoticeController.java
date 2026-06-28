@@ -1,6 +1,7 @@
 package com.gov.open.controller;
 
 import com.gov.common.annotation.Log;
+import com.gov.common.annotation.RequirePermission;
 import com.gov.common.result.PageResult;
 import com.gov.common.result.Result;
 import com.gov.open.dto.NoticeDTO;
@@ -50,6 +51,7 @@ public class NoticeController {
 
     @Operation(summary = "新增公告")
     @Log(module = "通知公告", action = "新增公告")
+    @RequirePermission(value = "open:notice:add")
     @PostMapping
     public Result<Void> add(
             @Parameter(description = "发布部门ID") @RequestHeader(value = "X-Dept-Id", required = false) Long publishDeptId,
@@ -61,6 +63,7 @@ public class NoticeController {
 
     @Operation(summary = "修改公告")
     @Log(module = "通知公告", action = "修改公告")
+    @RequirePermission(value = "open:notice:edit")
     @PutMapping("/{id}")
     public Result<Void> update(
             @Parameter(description = "公告ID") @PathVariable Long id,
@@ -71,6 +74,7 @@ public class NoticeController {
 
     @Operation(summary = "发布公告")
     @Log(module = "通知公告", action = "发布公告")
+    @RequirePermission(value = "open:notice:publish")
     @PostMapping("/publish/{id}")
     public Result<Void> publish(@Parameter(description = "公告ID") @PathVariable Long id) {
         noticeService.publishNotice(id);
@@ -79,6 +83,7 @@ public class NoticeController {
 
     @Operation(summary = "撤回公告")
     @Log(module = "通知公告", action = "撤回公告")
+    @RequirePermission(value = "open:notice:withdraw")
     @PostMapping("/withdraw/{id}")
     public Result<Void> withdraw(@Parameter(description = "公告ID") @PathVariable Long id) {
         noticeService.withdrawNotice(id);
@@ -87,6 +92,7 @@ public class NoticeController {
 
     @Operation(summary = "删除公告")
     @Log(module = "通知公告", action = "删除公告")
+    @RequirePermission(value = "open:notice:delete")
     @DeleteMapping("/{id}")
     public Result<Void> delete(@Parameter(description = "公告ID") @PathVariable Long id) {
         noticeService.removeById(id);

@@ -1,6 +1,7 @@
 package com.gov.open.controller;
 
 import com.gov.common.annotation.Log;
+import com.gov.common.annotation.RequirePermission;
 import com.gov.common.result.PageResult;
 import com.gov.common.result.Result;
 import com.gov.open.dto.PolicyDTO;
@@ -50,6 +51,7 @@ public class PolicyController {
 
     @Operation(summary = "新增政策法规")
     @Log(module = "政策法规", action = "新增政策法规")
+    @RequirePermission(value = "open:policy:add")
     @PostMapping
     public Result<Void> add(
             @Parameter(description = "发布部门ID") @RequestHeader(value = "X-Dept-Id", required = false) Long publishDeptId,
@@ -61,6 +63,7 @@ public class PolicyController {
 
     @Operation(summary = "修改政策法规")
     @Log(module = "政策法规", action = "修改政策法规")
+    @RequirePermission(value = "open:policy:edit")
     @PutMapping("/{id}")
     public Result<Void> update(
             @Parameter(description = "政策ID") @PathVariable Long id,
@@ -71,6 +74,7 @@ public class PolicyController {
 
     @Operation(summary = "发布政策法规")
     @Log(module = "政策法规", action = "发布政策法规")
+    @RequirePermission(value = "open:policy:publish")
     @PostMapping("/publish/{id}")
     public Result<Void> publish(@Parameter(description = "政策ID") @PathVariable Long id) {
         policyService.publishPolicy(id);
@@ -79,6 +83,7 @@ public class PolicyController {
 
     @Operation(summary = "废止政策法规")
     @Log(module = "政策法规", action = "废止政策法规")
+    @RequirePermission(value = "open:policy:abolish")
     @PostMapping("/abolish/{id}")
     public Result<Void> abolish(@Parameter(description = "政策ID") @PathVariable Long id) {
         policyService.abolishPolicy(id);
@@ -87,6 +92,7 @@ public class PolicyController {
 
     @Operation(summary = "删除政策法规")
     @Log(module = "政策法规", action = "删除政策法规")
+    @RequirePermission(value = "open:policy:delete")
     @DeleteMapping("/{id}")
     public Result<Void> delete(@Parameter(description = "政策ID") @PathVariable Long id) {
         policyService.removeById(id);

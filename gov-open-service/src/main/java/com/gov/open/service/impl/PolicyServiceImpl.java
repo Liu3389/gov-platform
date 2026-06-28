@@ -11,6 +11,7 @@ import com.gov.open.entity.PolicyEntity;
 import com.gov.open.mapper.PolicyMapper;
 import com.gov.open.service.PolicyService;
 import com.gov.open.vo.PolicyVO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,11 +24,13 @@ import java.util.stream.Collectors;
  * 政策法规Service实现
  */
 @Service
+@RequiredArgsConstructor
 public class PolicyServiceImpl extends ServiceImpl<PolicyMapper, PolicyEntity> implements PolicyService {
 
     @Override
     public PageResult<PolicyVO> pageQueryVO(Long pageNum, Long pageSize, Integer policyType, Integer status) {
         LambdaQueryWrapper<PolicyEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(PolicyEntity::getDeleted, 0);
         wrapper.eq(policyType != null, PolicyEntity::getPolicyType, String.valueOf(policyType));
         wrapper.eq(status != null, PolicyEntity::getStatus, String.valueOf(status));
         wrapper.orderByDesc(PolicyEntity::getCreateTime);

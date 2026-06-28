@@ -32,4 +32,12 @@ public class StartProcessDTO {
     @NotNull(message = "事项ID不能为空")
     @Schema(description = "事项ID", required = true)
     private Long itemId;
+
+    @NotBlank(message = "事项名称不能为空")
+    @Schema(description = "事项名称", required = true)
+    private String itemName;
+
+    @NotBlank(message = "申请人姓名不能为空")
+    @Schema(description = "申请人姓名", required = true)
+    private String userName;
 }
