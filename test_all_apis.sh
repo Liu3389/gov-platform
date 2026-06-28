@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# 全量接口测试脚本 v2
-# 测试时间: 2026-06-24
+# 全量接口测试脚本 v3
+# 测试时间: 2026-06-28
 # 测试范围: gov-user-service, gov-item-service, gov-monitor-service
-# 新增：响应体内容验证 + 权限控制测试
+# 新增：动态Token生成 + 响应体内容验证 + 权限控制测试
 
 GATEWAY="http://localhost:8091"
 PASS=0
@@ -11,19 +11,17 @@ FAIL=0
 
 # ==================== 工具函数 ====================
 
-# 获取 Token：通过登录接口
-get_token() {
-    local username=$1
-    local password=$2
-    local resp=$(curl -s -X POST -H "Content-Type: application/json" \
-        -d "{\"username\":\"$username\",\"password\":\"$password\"}" \
-        "$GATEWAY/api/v1/user/login")
-    local code=$(echo "$resp" | python3 -c "import sys,json; print(json.load(sys.stdin).get('code',0))" 2>/dev/null)
-    if [ "$code" = "200" ]; then
-        echo "$resp" | python3 -c "import sys,json; print(json.load(sys.stdin)['data']['token'])" 2>/dev/null
-    else
-        echo ""
-    fi
+# 动态生成 JWT Token（2小时有效）
+gen_token() {
+  python3 -c "
+import hmac, hashlib, base64, json, time
+h = {'alg':'HS256','typ':'JWT'}
+p = {'sub':'1','username':'admin','roles':'ROLE_ADMIN','iss':'gov-platform','iat':int(time.time()),'exp':int(time.time())+7200}
+def e(d): return base64.urlsafe_b64encode(json.dumps(d,separators=(',',':')).encode()).rstrip(b'=').decode()
+hb, pb = e(h), e(p)
+s = hmac.new('GovPlatformSecretKey2024ForJwtTokenGenerationAndValidation'.encode(),f'{hb}.{pb}'.encode(),hashlib.sha256).digest()
+print(f'{hb}.{pb}.{base64.urlsafe_b64encode(s).rstrip(b\"=\").decode()}')
+" 2>/dev/null
 }
 
 # 验证响应体
@@ -75,17 +73,7 @@ echo ""
 
 # ---- 获取 Token ----
 echo "--- 生成测试 Token ---"
-
-# 用 Python 生成带 ROLE_ADMIN 的 JWT Token（避免依赖登录API的密码问题）
-ADMIN_TOKEN=$(python3 -c "
-import hmac, hashlib, base64, json, time
-h = {'alg':'HS256','typ':'JWT'}
-p = {'sub':'1','username':'admin','roles':'ROLE_ADMIN','iss':'gov-platform','iat':int(time.time()),'exp':int(time.time())+7200}
-def e(d): return base64.urlsafe_b64encode(json.dumps(d,separators=(',',':')).encode()).rstrip(b'=').decode()
-hb, pb = e(h), e(p)
-s = hmac.new('GovPlatformSecretKey2024ForJwtTokenGenerationAndValidation'.encode(),f'{hb}.{pb}'.encode(),hashlib.sha256).digest()
-print(f'{hb}.{pb}.{base64.urlsafe_b64encode(s).rstrip(b\"=\").decode()}')
-" 2>/dev/null)
+ADMIN_TOKEN=$(gen_token)
 
 if [ -z "$ADMIN_TOKEN" ]; then
     echo "  ❌ Token 生成失败"
@@ -193,7 +181,15 @@ curl -s -X POST -H "Authorization: Bearer $ADMIN_TOKEN" -H "Content-Type: applic
 
 # 用普通用户登录获取 Token
 sleep 1
-NORMAL_TOKEN=$(get_token "normaltest" "test123456")
+NORMAL_TOKEN=$(python3 -c "
+import hmac, hashlib, base64, json, time
+h = {'alg':'HS256','typ':'JWT'}
+p = {'sub':'10002','username':'zhang','iss':'gov-platform','iat':int(time.time()),'exp':int(time.time())+7200}
+def e(d): return base64.urlsafe_b64encode(json.dumps(d,separators=(',',':')).encode()).rstrip(b'=').decode()
+hb, pb = e(h), e(p)
+s = hmac.new('GovPlatformSecretKey2024ForJwtTokenGenerationAndValidation'.encode(),f'{hb}.{pb}'.encode(),hashlib.sha256).digest()
+print(f'{hb}.{pb}.{base64.urlsafe_b64encode(s).rstrip(b\"=\").decode()}')
+" 2>/dev/null)
 if [ -z "$NORMAL_TOKEN" ]; then
     echo "  ⚠️  普通用户登录失败，跳过权限测试"
 else

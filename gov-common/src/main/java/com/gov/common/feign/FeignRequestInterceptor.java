@@ -61,5 +61,11 @@ public class FeignRequestInterceptor implements RequestInterceptor {
         if (deptId != null && !deptId.isEmpty()) {
             template.header("X-Dept-Id", deptId);
         }
+
+        // 透传角色信息（网关 AuthFilter 从 JWT 解析后设置，下游 @RequirePermission 依赖此头）
+        String roles = request.getHeader("X-Roles");
+        if (roles != null && !roles.isEmpty()) {
+            template.header("X-Roles", roles);
+        }
     }
 }

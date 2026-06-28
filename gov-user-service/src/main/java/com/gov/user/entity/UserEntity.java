@@ -36,9 +36,15 @@ public class UserEntity extends BaseEntity {
     @Schema(description = "头像URL")
     private String avatar;
 
+    @Schema(description = "性别：0未知 1男 2女")
+    private Integer gender;
+
     @Schema(description = "状态：0正常 1禁用 2待实名")
     private Integer status;
 
     @Schema(description = "最后登录时间")
     private java.time.LocalDateTime lastLoginTime;
+
+    @Schema(description = "最后登录IP")
+    private String lastLoginIp;
 }

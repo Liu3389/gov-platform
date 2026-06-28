@@ -36,7 +36,7 @@ public class LicenseController {
     @GetMapping("/list")
     public Result<PageResult<LicenseVO>> list(
             @Parameter(description = "页码") @RequestParam(defaultValue = "1") @Min(1) Long pageNum,
-            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Max(value = 100, message = "每页最大100条") Long pageSize,
+            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Min(1) @Max(value = 100, message = "每页最大100条") Long pageSize,
             @Parameter(description = "证照编号") @RequestParam(required = false) String licenseNo,
             @Parameter(description = "关键词（姓名/目录）") @RequestParam(required = false) String keyword,
             @Parameter(description = "状态") @RequestParam(required = false) String status) {

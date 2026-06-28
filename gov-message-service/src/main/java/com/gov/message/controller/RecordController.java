@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 /**
  * 消息记录管理
@@ -32,8 +33,8 @@ public class RecordController {
     @Operation(summary = "分页查询记录")
     @GetMapping("/list")
     public Result<PageResult<RecordVO>> list(
-            @Parameter(description = "页码", example = "1") @RequestParam(defaultValue = "1") Long pageNum,
-            @Parameter(description = "每页大小", example = "10") @RequestParam(defaultValue = "10") @Max(value = 100, message = "每页最大100条") Long pageSize,
+            @Parameter(description = "页码", example = "1") @Min(1) @RequestParam(defaultValue = "1") Long pageNum,
+            @Parameter(description = "每页大小", example = "10") @RequestParam(defaultValue = "10") @Min(1) @Max(value = 100, message = "每页最大100条") Long pageSize,
             @Parameter(description = "发送渠道", example = "sms") @RequestParam(required = false) String channel,
             @Parameter(description = "发送状态", example = "0") @RequestParam(required = false) String sendStatus) {
         return Result.success(recordService.pageQueryVO(pageNum, pageSize, channel, sendStatus));

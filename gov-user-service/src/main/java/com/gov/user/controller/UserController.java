@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 @Tag(name = "用户管理", description = "用户登录、注册、信息管理接口")
 @RestController
@@ -79,8 +80,8 @@ public class UserController {
     @Operation(summary = "分页查询用户列表")
     @GetMapping("/list")
     public Result<PageResult<UserVO>> list(
-            @Parameter(description = "页码") @RequestParam(defaultValue = "1") Long pageNum,
-            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Max(value = 100, message = "每页最大100条") Long pageSize,
+            @Parameter(description = "页码") @Min(1) @RequestParam(defaultValue = "1") Long pageNum,
+            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Min(1) @Max(value = 100, message = "每页最大100条") Long pageSize,
             @Parameter(description = "用户名") @RequestParam(required = false) String username) {
         return Result.success(userService.pageQuery(pageNum, pageSize, username));
     }

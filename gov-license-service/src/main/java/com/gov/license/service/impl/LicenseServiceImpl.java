@@ -23,7 +23,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -110,14 +113,21 @@ public class LicenseServiceImpl extends ServiceImpl<LicenseMapper, LicenseEntity
   /** 发送证照生成通知 */
   private void sendNotification(LicenseEntity entity, LicenseGenerateDTO dto) {
     try {
+      Map<String, String> variables = new HashMap<>();
+      variables.put("userName", dto.getUserName());
+      variables.put("itemName", dto.getItemName());
+      variables.put("licenseNo", entity.getLicenseNo());
+      variables.put("completeTime", LocalDateTime.now()
+          .format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")));
+
       MessageSendDTO msgDTO = MessageSendDTO.builder()
-          .title("证照办理完成通知")
-          .content("您的" + dto.getItemName() + "证照已生成，证照编号：" + entity.getLicenseNo())
+          .templateId(2L)  // CASE_FINISH：办件完成通知模板
           .receiverId(dto.getUserId())
-          .channel("INNER")
-          .licenseNo(entity.getLicenseNo())
-          .itemName(dto.getItemName())
-          .completeTime(LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+          .receiverName(dto.getUserName())
+          .variables(variables)
+          .channels(Collections.singletonList("SITE_MSG"))
+          .businessType("LICENSE")
+          .businessId(entity.getLicenseNo())
           .build();
       Result<Void> result = messageFeignClient.send(msgDTO);
       log.info("消息通知发送结果：code={}, licenseNo={}", result.getCode(), entity.getLicenseNo());

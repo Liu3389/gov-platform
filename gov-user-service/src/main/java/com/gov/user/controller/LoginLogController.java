@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 
 @Tag(name = "登录日志管理", description = "登录日志管理接口")
 @RestController
@@ -29,8 +30,8 @@ public class LoginLogController {
     @Operation(summary = "分页查询登录日志")
     @GetMapping("/page")
     public Result<PageResult<LoginLogVO>> page(
-            @Parameter(description = "页码") @RequestParam(defaultValue = "1") Long pageNum,
-            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Max(value = 100, message = "每页最大100条") Long pageSize,
+            @Parameter(description = "页码") @Min(1) @RequestParam(defaultValue = "1") Long pageNum,
+            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Min(1) @Max(value = 100, message = "每页最大100条") Long pageSize,
             @Parameter(description = "用户ID") @RequestParam(required = false) Long userId) {
         return Result.success(loginLogService.pageQueryVO(pageNum, pageSize, userId));
     }

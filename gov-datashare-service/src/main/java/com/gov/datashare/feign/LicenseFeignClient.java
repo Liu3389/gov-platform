@@ -22,13 +22,4 @@ public interface LicenseFeignClient {
      */
     @GetMapping("/{id}")
     Result<LicenseVO> getById(@PathVariable("id") Long id);
-
-    /**
-     * 根据办件号查询证照
-     *
-     * @param applyNo 办件号
-     * @return 证照信息
-     */
-    @GetMapping("/byApplyNo")
-    Result<LicenseVO> getByApplyNo(@RequestParam("applyNo") String applyNo);
 }

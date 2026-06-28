@@ -27,6 +27,12 @@ public class WindowEntity extends BaseEntity {
     @Schema(description = "窗口工作人员ID")
     private Long staffId;
 
+    @Schema(description = "窗口工作人员姓名")
+    private String staffName;
+
+    @Schema(description = "窗口类型")
+    private String windowType;
+
     @Schema(description = "状态：0关闭 1开放 2暂停")
     private String status;
 }

@@ -80,3 +80,16 @@ application-local.properties
 # ==================== Local ====================
 .m2/
 txt
+
+# ==================== Frontend (gov-frontend) ====================
+node_modules/
+dist/
+.env.local
+.env.*.local
+*.local
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+.vite/
+vite.config.*.timestamp-*

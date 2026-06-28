@@ -2,7 +2,6 @@ package com.gov.reception.feign;
 
 import com.gov.common.result.Result;
 import com.gov.common.sentinel.SentinelBlockHandler;
-import com.gov.common.vo.WorkflowTaskVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.cloud.openfeign.FallbackFactory;
 import org.springframework.stereotype.Component;
@@ -17,6 +16,6 @@ public class ActivitiFeignFallbackFactory implements FallbackFactory<ActivitiFei
     @Override
     public ActivitiFeignClient create(Throwable cause) {
         log.error("[Feign] 调用 gov-activiti-service 失败", cause);
-        return dto -> SentinelBlockHandler.<WorkflowTaskVO>blockHandler("activiti-service", "startProcess");
+        return dto -> SentinelBlockHandler.<String>blockHandler("activiti-service", "startProcess");
     }
 }

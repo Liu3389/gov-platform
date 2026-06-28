@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
+import javax.validation.constraints.Min;
 import java.util.List;
 
 @Tag(name = "部门管理", description = "部门信息管理接口")
@@ -37,8 +38,8 @@ public class DeptController {
     @Operation(summary = "分页查询部门")
     @GetMapping("/page")
     public Result<PageResult<DeptVO>> page(
-            @Parameter(description = "页码") @RequestParam(defaultValue = "1") Long pageNum,
-            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Max(value = 100, message = "每页最大100条") Long pageSize,
+            @Parameter(description = "页码") @Min(1) @RequestParam(defaultValue = "1") Long pageNum,
+            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Min(1) @Max(value = 100, message = "每页最大100条") Long pageSize,
             @Parameter(description = "部门名称") @RequestParam(required = false) String deptName) {
         return Result.success(deptService.pageQueryVO(pageNum, pageSize, deptName));
     }
