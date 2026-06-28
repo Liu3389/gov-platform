@@ -12,11 +12,13 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 import javax.validation.constraints.Max;
+import java.time.LocalDateTime;
 
 @Tag(name = "操作日志", description = "操作日志查询与管理")
 @RestController
@@ -33,6 +35,16 @@ public class LogController {
             @Parameter(description = "页码") @RequestParam(defaultValue = "1") Long pageNum,
             @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Max(value = 100, message = "每页最大100条") Long pageSize) {
         return Result.success(logService.pageQueryVO(pageNum, pageSize));
+    }
+
+    @Operation(summary = "审计日志查询（按操作时间筛选）")
+    @GetMapping("/audit")
+    public Result<PageResult<LogVO>> audit(
+            @Parameter(description = "页码") @RequestParam(defaultValue = "1") Long pageNum,
+            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Max(value = 100, message = "每页最大100条") Long pageSize,
+            @Parameter(description = "操作开始时间") @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime operateStart,
+            @Parameter(description = "操作结束时间") @RequestParam(required = false) @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") LocalDateTime operateEnd) {
+        return Result.success(logService.pageAuditVO(pageNum, pageSize, operateStart, operateEnd));
     }
 
     @Operation(summary = "根据ID查询操作日志")

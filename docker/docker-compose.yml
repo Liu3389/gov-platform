@@ -140,6 +140,43 @@ services:
       SENTINEL_AUTH_PASSWORD: sentinel
       TZ: Asia/Shanghai
 
+  # ==================== SkyWalking 链路追踪（第一阶段） ====================
+  # OAP Server — 接收 Agent 上报的链路数据
+  skywalking-oap:
+    image: apache/skywalking-oap-server:9.7.0
+    container_name: gov-skywalking-oap
+    restart: always
+    networks: [gov-net]
+    ports:
+      - "11800:11800"   # gRPC（Agent 上报端口）
+      - "12800:12800"   # HTTP（Agent 上报端口）
+    environment:
+      SW_STORAGE: h2
+      SW_HEALTH_CHECKER: default
+      SW_TELEMETRY: prometheus
+      TZ: Asia/Shanghai
+    healthcheck:
+      test: ["CMD", "bash", "-c", "cat < /dev/null > /dev/tcp/127.0.0.1/12800"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
+
+  # SkyWalking UI — 链路追踪可视化界面
+  skywalking-ui:
+    image: apache/skywalking-ui:9.7.0
+    container_name: gov-skywalking-ui
+    restart: always
+    networks: [gov-net]
+    depends_on:
+      skywalking-oap:
+        condition: service_healthy
+    ports:
+      - "18080:8080"
+    environment:
+      SW_OAP_ADDRESS: http://skywalking-oap:12800
+      TZ: Asia/Shanghai
+
   # ==================== Nginx ====================
   nginx:
     image: nginx:1.25-alpine
