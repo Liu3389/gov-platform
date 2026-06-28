@@ -7,6 +7,8 @@ import com.gov.monitor.dto.LogDTO;
 import com.gov.monitor.entity.LogEntity;
 import com.gov.monitor.vo.LogVO;
 
+import java.time.LocalDateTime;
+
 public interface LogService extends IService<LogEntity> {
 
     PageResult<LogVO> pageQueryVO(Long pageNum, Long pageSize);
@@ -18,4 +20,6 @@ public interface LogService extends IService<LogEntity> {
     void deleteLog(Long id);
 
     void recordLog(OperateLogEvent event);
+
+    PageResult<LogVO> pageAuditVO(Long pageNum, Long pageSize, LocalDateTime operateStart, LocalDateTime operateEnd);
 }

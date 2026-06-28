@@ -59,3 +59,7 @@ knife4j:
 logging:
   level:
     com.gov.monitor: warn
+
+# ===== Seata：依赖已引入，但启动时不连接 Server（部署后改为 true 即可） =====
+seata:
+  enabled: false

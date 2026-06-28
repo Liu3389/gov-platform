@@ -16,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -56,6 +57,22 @@ public class LogServiceImpl extends ServiceImpl<LogMapper, LogEntity> implements
             throw BusinessException.notFound("日志不存在");
         }
         this.removeById(id);
+    }
+
+    @Override
+    public PageResult<LogVO> pageAuditVO(Long pageNum, Long pageSize, LocalDateTime operateStart, LocalDateTime operateEnd) {
+        LambdaQueryWrapper<LogEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(LogEntity::getDeleted, 0);
+        if (operateStart != null) {
+            wrapper.ge(LogEntity::getOperateTime, operateStart);
+        }
+        if (operateEnd != null) {
+            wrapper.le(LogEntity::getOperateTime, operateEnd);
+        }
+        wrapper.orderByDesc(LogEntity::getOperateTime);
+        Page<LogEntity> page = this.page(new Page<>(pageNum, pageSize), wrapper);
+        List<LogVO> voList = LogConvert.toVOList(page.getRecords());
+        return PageResult.of(voList, page.getTotal(), page.getCurrent(), page.getSize());
     }
 
     @Override
