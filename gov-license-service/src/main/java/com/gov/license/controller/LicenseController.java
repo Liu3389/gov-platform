@@ -52,9 +52,8 @@ public class LicenseController {
 
     // ==================== 写操作 ====================
 
-    @Operation(summary = "生成证照（审批办结后调用）")
+    @Operation(summary = "生成证照（审批办结后调用，内部Feign接口）")
     @Log(module = "电子证照", action = "生成证照")
-    @RequirePermission(value = "license:generate")
     @PostMapping
     public Result<LicenseVO> generate(@Valid @RequestBody LicenseGenerateDTO dto) {
         return Result.success(licenseService.generate(dto));

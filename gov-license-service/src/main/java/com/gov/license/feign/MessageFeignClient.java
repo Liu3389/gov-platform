@@ -1,6 +1,7 @@
 package com.gov.license.feign;
 
 import com.gov.common.result.Result;
+import com.gov.license.dto.MessageSendDTO;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -13,5 +14,5 @@ import org.springframework.web.bind.annotation.RequestBody;
 public interface MessageFeignClient {
 
     @PostMapping("/send")
-    Result<Void> send(@RequestBody Object messageDTO);
+    Result<Void> send(@RequestBody MessageSendDTO messageDTO);
 }

@@ -14,6 +14,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "gov-license-service", path = "/license", fallbackFactory = LicenseFeignFallbackFactory.class)
 public interface LicenseFeignClient {
 
-    @PostMapping("/generate")
+    @PostMapping
     Result<LicenseVO> generate(@RequestBody LicenseGenerateDTO dto);
 }

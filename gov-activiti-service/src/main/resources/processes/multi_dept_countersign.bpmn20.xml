@@ -27,23 +27,48 @@
     <startEvent id="start_apply" name="开始" />
 
     <userTask id="task_accept_window" name="窗口受理"
-        activiti:candidateGroups="window_staff" />
+        activiti:candidateGroups="window_staff">
+      <extensionElements>
+        <activiti:taskListener event="create" class="com.gov.activiti.listener.TaskCreateListener" />
+        <activiti:taskListener event="complete" class="com.gov.activiti.listener.TaskCompleteListener" />
+      </extensionElements>
+    </userTask>
 
     <userTask id="task_review_dept" name="部门初审"
-        activiti:candidateGroups="dept_staff" />
+        activiti:candidateGroups="dept_staff">
+      <extensionElements>
+        <activiti:taskListener event="create" class="com.gov.activiti.listener.TaskCreateListener" />
+        <activiti:taskListener event="complete" class="com.gov.activiti.listener.TaskCompleteListener" />
+      </extensionElements>
+    </userTask>
 
     <exclusiveGateway id="gateway_review_result" name="初审结果" />
 
     <userTask id="task_countersign_multi" name="多部门会签"
-        activiti:candidateGroups="multi_dept" />
+        activiti:candidateGroups="multi_dept">
+      <extensionElements>
+        <activiti:taskListener event="create" class="com.gov.activiti.listener.TaskCreateListener" />
+        <activiti:taskListener event="complete" class="com.gov.activiti.listener.TaskCompleteListener" />
+      </extensionElements>
+    </userTask>
 
     <exclusiveGateway id="gateway_countersign_result" name="会签结果" />
 
     <userTask id="task_complete" name="办结"
-        activiti:assignee="${applyUserId}" />
+        activiti:assignee="${applyUserId}">
+      <extensionElements>
+        <activiti:taskListener event="create" class="com.gov.activiti.listener.TaskCreateListener" />
+        <activiti:taskListener event="complete" class="com.gov.activiti.listener.TaskCompleteListener" />
+      </extensionElements>
+    </userTask>
 
     <userTask id="task_return_user" name="退回申请人"
-        activiti:assignee="${applyUserId}" />
+        activiti:assignee="${applyUserId}">
+      <extensionElements>
+        <activiti:taskListener event="create" class="com.gov.activiti.listener.TaskCreateListener" />
+        <activiti:taskListener event="complete" class="com.gov.activiti.listener.TaskCompleteListener" />
+      </extensionElements>
+    </userTask>
 
     <endEvent id="end_apply" name="结束" />
 

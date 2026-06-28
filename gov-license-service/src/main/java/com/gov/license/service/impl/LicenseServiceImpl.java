@@ -9,8 +9,10 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.gov.common.constant.WorkflowConstants;
 import com.gov.common.exception.BusinessException;
 import com.gov.common.result.PageResult;
+import com.gov.common.result.Result;
 import com.gov.license.dto.*;
 import com.gov.license.entity.*;
+import com.gov.license.feign.MessageFeignClient;
 import com.gov.license.mapper.*;
 import com.gov.license.service.LicenseService;
 import com.gov.license.vo.LicenseDetailVO;
@@ -33,6 +35,7 @@ public class LicenseServiceImpl extends ServiceImpl<LicenseMapper, LicenseEntity
   private final LicenseSignMapper signMapper;
   private final LicenseVerifyMapper verifyMapper;
   private final LicenseAuthMapper authMapper;
+  private final MessageFeignClient messageFeignClient;
 
   @Override
   public PageResult<LicenseVO> pageQuery(Long pageNum, Long pageSize, String licenseNo, String keyword, String status) {
@@ -96,9 +99,32 @@ public class LicenseServiceImpl extends ServiceImpl<LicenseMapper, LicenseEntity
 
     log.info("证照生成成功：licenseNo={}, userId={}, catalogCode={}", licenseNo, dto.getUserId(), dto.getCatalogCode());
 
+    // ★ 证照生成成功后发送消息通知
+    sendNotification(entity, dto);
+
     LicenseVO vo = new LicenseVO();
     BeanUtil.copyProperties(entity, vo);
     return vo;
+  }
+
+  /** 发送证照生成通知 */
+  private void sendNotification(LicenseEntity entity, LicenseGenerateDTO dto) {
+    try {
+      MessageSendDTO msgDTO = MessageSendDTO.builder()
+          .title("证照办理完成通知")
+          .content("您的" + dto.getItemName() + "证照已生成，证照编号：" + entity.getLicenseNo())
+          .receiverId(dto.getUserId())
+          .channel("INNER")
+          .licenseNo(entity.getLicenseNo())
+          .itemName(dto.getItemName())
+          .completeTime(LocalDateTime.now().format(java.time.format.DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss")))
+          .build();
+      Result<Void> result = messageFeignClient.send(msgDTO);
+      log.info("消息通知发送结果：code={}, licenseNo={}", result.getCode(), entity.getLicenseNo());
+    } catch (Exception e) {
+      log.error("发送消息通知失败（不阻塞证照生成）：licenseNo={}, error={}",
+          entity.getLicenseNo(), e.getMessage(), e);
+    }
   }
 
   @Override
