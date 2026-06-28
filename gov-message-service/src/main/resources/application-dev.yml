@@ -7,6 +7,8 @@ spring:
   config:
     import: "optional:nacos:gov-platform-common.yaml?group=DEFAULT_GROUP"
   cloud:
+    sentinel:
+      enabled: false
     nacos:
       discovery:
         server-addr: localhost:8848
@@ -38,12 +40,12 @@ spring:
       test-on-return: false
   redis:
     host: localhost
-    port: 6380
+    port: 6379
     database: 9
   # ==================== RabbitMQ ====================
   rabbitmq:
     host: localhost
-    port: 5673
+    port: 5672
     username: guest
     password: guest
     virtual-host: /
@@ -65,4 +67,4 @@ knife4j:
 
 logging:
   level:
-    com.gov.message: warn
+    com.gov.message: debug

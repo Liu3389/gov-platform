@@ -88,6 +88,14 @@ public class WorkServiceImpl extends ServiceImpl<WorkMapper, WorkEntity> impleme
     private WorkVO toVO(WorkEntity entity) {
         WorkVO vo = new WorkVO();
         BeanUtil.copyProperties(entity, vo);
+        // 敏感字段脱敏：手机号
+        if (vo.getUserPhone() != null && vo.getUserPhone().length() > 7) {
+            vo.setUserPhone(vo.getUserPhone().substring(0, 3) + "****" + vo.getUserPhone().substring(7));
+        }
+        // 敏感字段脱敏：身份证号
+        if (vo.getUserIdCard() != null && vo.getUserIdCard().length() > 8) {
+            vo.setUserIdCard(vo.getUserIdCard().substring(0, 4) + "**********" + vo.getUserIdCard().substring(vo.getUserIdCard().length() - 4));
+        }
         return vo;
     }
 

@@ -7,6 +7,8 @@ spring:
   config:
     import: "optional:nacos:gov-platform-common.yaml?group=DEFAULT_GROUP"
   cloud:
+    sentinel:
+      enabled: false
     nacos:
       discovery:
         server-addr: localhost:8848
@@ -38,7 +40,7 @@ spring:
       test-on-return: false
   redis:
     host: localhost
-    port: 6380
+    port: 6379
     database: 8
 
 mybatis-plus:
@@ -58,4 +60,4 @@ knife4j:
 
 logging:
   level:
-    com.gov.datashare: warn
+    com.gov.datashare: debug

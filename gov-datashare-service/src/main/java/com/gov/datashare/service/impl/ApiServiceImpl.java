@@ -12,6 +12,7 @@ import com.gov.datashare.entity.ApiEntity;
 import com.gov.datashare.mapper.ApiMapper;
 import com.gov.datashare.service.ApiService;
 import com.gov.datashare.vo.ApiVO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class ApiServiceImpl extends ServiceImpl<ApiMapper, ApiEntity> implements ApiService {
 
     @Override

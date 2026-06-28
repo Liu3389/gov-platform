@@ -15,7 +15,7 @@ import javax.validation.constraints.NotBlank;
 public class TemplateDTO {
 
     @Schema(description = "模板ID（修改时必填）", example = "1")
-    private Long id = 1L;
+    private Long id;
 
     @NotBlank(message = "模板编码不能为空")
     @Schema(description = "模板编码", required = true, example = "SMS_VERIFY_CODE")
