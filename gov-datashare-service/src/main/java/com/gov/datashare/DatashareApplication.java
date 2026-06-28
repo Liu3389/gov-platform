@@ -8,7 +8,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 /**
  * 数据共享服务启动类
- * 组员D负责：数据源注册、接口发布订阅、共享目录、调用统计
+ * 成员D负责：数据源注册、接口发布订阅、共享目录、调用统计
  */
 @SpringBootApplication(scanBasePackages = {"com.gov.datashare", "com.gov.common"})
 @EnableDiscoveryClient

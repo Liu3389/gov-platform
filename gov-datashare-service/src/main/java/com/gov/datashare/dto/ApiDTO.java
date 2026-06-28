@@ -16,7 +16,7 @@ import javax.validation.constraints.NotNull;
 public class ApiDTO {
 
     @Schema(description = "接口ID（修改时必填）", example = "1")
-    private Long id = 1L;
+    private Long id;
 
     @NotBlank(message = "接口编码不能为空")
     @Schema(description = "接口编码", required = true, example = "USER_INFO_QUERY")

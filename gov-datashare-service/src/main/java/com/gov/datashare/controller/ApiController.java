@@ -22,7 +22,7 @@ import javax.validation.constraints.Max;
  */
 @Tag(name = "共享接口", description = "共享接口管理")
 @RestController
-@RequestMapping("/share")
+@RequestMapping("/share/api")
 @RequiredArgsConstructor
 @Validated
 public class ApiController {

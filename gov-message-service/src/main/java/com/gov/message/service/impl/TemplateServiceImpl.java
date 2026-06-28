@@ -12,6 +12,7 @@ import com.gov.message.entity.TemplateEntity;
 import com.gov.message.mapper.TemplateMapper;
 import com.gov.message.service.TemplateService;
 import com.gov.message.vo.TemplateVO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -19,6 +20,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@RequiredArgsConstructor
 public class TemplateServiceImpl extends ServiceImpl<TemplateMapper, TemplateEntity> implements TemplateService {
 
     @Override

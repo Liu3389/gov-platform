@@ -8,7 +8,7 @@ import org.springframework.cloud.openfeign.EnableFeignClients;
 
 /**
  * 消息通知服务启动类
- * 组长维护：消息模板、多渠道推送、站内信、APP推送
+ * 成员D负责：消息模板、多渠道推送、站内信、APP推送
  */
 @SpringBootApplication(scanBasePackages = {"com.gov.message", "com.gov.common"})
 @EnableDiscoveryClient

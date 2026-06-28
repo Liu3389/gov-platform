@@ -22,7 +22,7 @@ import javax.validation.constraints.Max;
  */
 @Tag(name = "消息模板", description = "消息模板管理接口")
 @RestController
-@RequestMapping("/message")
+@RequestMapping("/message/template")
 @RequiredArgsConstructor
 @Validated
 public class TemplateController {
