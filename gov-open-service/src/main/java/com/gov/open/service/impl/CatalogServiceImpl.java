@@ -9,6 +9,7 @@ import com.gov.open.entity.CatalogEntity;
 import com.gov.open.mapper.CatalogMapper;
 import com.gov.open.service.CatalogService;
 import com.gov.open.vo.CatalogVO;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -22,11 +23,13 @@ import java.util.stream.Collectors;
  * 公开目录Service实现
  */
 @Service
+@RequiredArgsConstructor
 public class CatalogServiceImpl extends ServiceImpl<CatalogMapper, CatalogEntity> implements CatalogService {
 
     @Override
     public List<CatalogVO> getCatalogTree(Integer catalogType) {
         LambdaQueryWrapper<CatalogEntity> wrapper = new LambdaQueryWrapper<>();
+        wrapper.eq(CatalogEntity::getDeleted, 0);
         wrapper.eq(catalogType != null, CatalogEntity::getCatalogType, String.valueOf(catalogType));
         wrapper.eq(CatalogEntity::getStatus, "1");
         wrapper.orderByAsc(CatalogEntity::getSort);

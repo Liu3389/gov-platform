@@ -1,6 +1,7 @@
 package com.gov.open.controller;
 
 import com.gov.common.annotation.Log;
+import com.gov.common.annotation.RequirePermission;
 import com.gov.common.result.PageResult;
 import com.gov.common.result.Result;
 import com.gov.open.dto.ApplyDTO;
@@ -62,6 +63,7 @@ public class ApplyController {
 
     @Operation(summary = "受理申请")
     @Log(module = "依申请公开", action = "受理申请")
+    @RequirePermission(value = "open:apply:accept")
     @PostMapping("/accept/{id}")
     public Result<Void> accept(@Parameter(description = "申请ID") @PathVariable Long id) {
         applyService.acceptApply(id);
@@ -70,6 +72,7 @@ public class ApplyController {
 
     @Operation(summary = "答复申请")
     @Log(module = "依申请公开", action = "答复申请")
+    @RequirePermission(value = "open:apply:reply")
     @PostMapping("/reply/{id}")
     public Result<Void> reply(
             @Parameter(description = "申请ID") @PathVariable Long id,
@@ -82,6 +85,7 @@ public class ApplyController {
 
     @Operation(summary = "不予公开")
     @Log(module = "依申请公开", action = "不予公开")
+    @RequirePermission(value = "open:apply:reject")
     @PostMapping("/reject/{id}")
     public Result<Void> reject(
             @Parameter(description = "申请ID") @PathVariable Long id,

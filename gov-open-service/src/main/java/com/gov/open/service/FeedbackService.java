@@ -2,6 +2,7 @@ package com.gov.open.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.gov.common.result.PageResult;
+import com.gov.open.dto.FeedbackDTO;
 import com.gov.open.entity.FeedbackEntity;
 import com.gov.open.vo.FeedbackVO;
 
@@ -23,7 +24,7 @@ public interface FeedbackService extends IService<FeedbackEntity> {
     /**
      * 提交反馈
      */
-    void submitFeedback(FeedbackEntity entity);
+    void submitFeedback(FeedbackDTO dto, Long userId);
 
     /**
      * 回复反馈

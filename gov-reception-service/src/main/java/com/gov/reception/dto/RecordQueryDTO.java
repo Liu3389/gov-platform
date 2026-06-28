@@ -3,6 +3,8 @@ package com.gov.reception.dto;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
 
+import java.time.LocalDateTime;
+
 /**
  * 办件查询DTO
  */
@@ -26,8 +28,21 @@ public class RecordQueryDTO {
     private String status;
 
     @Schema(description = "开始时间")
-    private String startTime;
+    private LocalDateTime startTime;
 
     @Schema(description = "结束时间")
-    private String endTime;
+    private LocalDateTime endTime;
+
+    /**
+     * 转为 Entity
+     */
+    public com.gov.reception.entity.RecordEntity toEntity() {
+        com.gov.reception.entity.RecordEntity entity = new com.gov.reception.entity.RecordEntity();
+        entity.setApplyNo(this.applyNo);
+        entity.setItemId(this.itemId);
+        entity.setUserId(this.userId);
+        entity.setDeptId(this.deptId);
+        entity.setStatus(this.status);
+        return entity;
+    }
 }

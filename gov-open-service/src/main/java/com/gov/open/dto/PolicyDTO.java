@@ -40,4 +40,21 @@ public class PolicyDTO {
 
     @Schema(description = "状态：0草稿 1已发布")
     private String status;
+
+    /**
+     * 转为 Entity
+     */
+    public com.gov.open.entity.PolicyEntity toEntity() {
+        com.gov.open.entity.PolicyEntity entity = new com.gov.open.entity.PolicyEntity();
+        entity.setPolicyName(this.policyName);
+        entity.setPolicyType(this.policyType);
+        entity.setContent(this.content);
+        entity.setPublishDate(this.publishDate);
+        entity.setImplementDate(this.implementDate);
+        entity.setEffectiveStatus(this.effectiveStatus);
+        entity.setFileUrl(this.fileUrl);
+        entity.setKeywords(this.keywords);
+        entity.setStatus(this.status);
+        return entity;
+    }
 }

@@ -39,6 +39,9 @@ public class ApplyEntity extends BaseEntity {
     @Schema(description = "申请原因")
     private String applyReason;
 
+    @Schema(description = "不予公开原因")
+    private String rejectReason;
+
     @Schema(description = "申请方式")
     private String applyType;
 

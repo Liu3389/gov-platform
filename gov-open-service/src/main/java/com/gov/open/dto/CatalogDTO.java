@@ -34,4 +34,19 @@ public class CatalogDTO {
 
     @Schema(description = "状态：0禁用 1启用")
     private String status;
+
+    /**
+     * 转为 Entity
+     */
+    public com.gov.open.entity.CatalogEntity toEntity() {
+        com.gov.open.entity.CatalogEntity entity = new com.gov.open.entity.CatalogEntity();
+        entity.setCatalogCode(this.catalogCode);
+        entity.setCatalogName(this.catalogName);
+        entity.setParentId(this.parentId);
+        entity.setCatalogLevel(this.catalogLevel);
+        entity.setCatalogType(this.catalogType);
+        entity.setSort(this.sort);
+        entity.setStatus(this.status);
+        return entity;
+    }
 }
