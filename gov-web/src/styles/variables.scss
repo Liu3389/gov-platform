@@ -1,0 +1,59 @@
+// ============================================
+// 智慧政务 · 设计系统
+// 极简克制 · 留白秩序 · 统一规范
+// ============================================
+
+// ---------- 色板 ----------
+$text-primary:    #1a1a1a;
+$text-secondary:  #555555;
+$text-weak:       #999999;
+$border:          #e5e5e5;
+$border-light:    #f0f0f0;
+$bg-page:         #fafafa;
+$bg-white:        #ffffff;
+$bg-hover:        #f5f5f5;
+$primary:         #1a56db;
+$primary-hover:   #1e40af;
+$primary-soft:    #eff6ff;
+$success:         #059669;
+$success-soft:    #ecfdf5;
+$warning:         #d97706;
+$warning-soft:    #fffbeb;
+$danger:          #dc2626;
+$danger-soft:     #fef2f2;
+$sidebar-bg:      #1e1e1e;
+$sidebar-text:    #a0a0a0;
+$sidebar-active:  #ffffff;
+$sidebar-hover:   #2a2a2a;
+
+// ---------- 字体 ----------
+$font-stack: -apple-system, BlinkMacSystemFont, 'SF Pro Display',
+             'PingFang SC', 'Microsoft YaHei', sans-serif;
+
+// 全站仅用这 6 个字号
+$fs-page-title: 28px;   // 页面标题
+$fs-section:    18px;   // 区块标题
+$fs-card-title: 15px;   // 卡片标题、列表标题
+$fs-body:       14px;   // 正文、表格内容
+$fs-aux:        13px;   // 辅助文字、时间、元信息
+$fs-tiny:       12px;   // 标签、徽章、页脚
+
+$fw-bold:   700;
+$fw-semibold: 600;
+$fw-medium: 500;
+$fw-normal: 400;
+
+// ---------- 间距（4px 基准）----------
+$sp-xs:  4px;
+$sp-sm:  8px;
+$sp-md:  12px;
+$sp-lg:  16px;
+$sp-xl:  24px;
+$sp-2xl: 32px;
+$sp-3xl: 48px;
+$sp-4xl: 64px;
+
+// ---------- 圆角 ----------
+$radius-sm: 4px;
+$radius-md: 6px;
+$radius-lg: 8px;
