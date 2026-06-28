@@ -38,7 +38,7 @@ public class RoleController {
     @GetMapping("/page")
     public Result<PageResult<RoleVO>> page(
             @Parameter(description = "页码") @Min(1) @RequestParam(defaultValue = "1") Long pageNum,
-            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Max(value = 100, message = "每页最大100条") Long pageSize,
+            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Min(1) @Max(value = 100, message = "每页最大100条") Long pageSize,
             @Parameter(description = "角色名称") @RequestParam(required = false) String roleName) {
         return Result.success(roleService.pageQueryVO(pageNum, pageSize, roleName));
     }

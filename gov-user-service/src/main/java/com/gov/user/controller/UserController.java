@@ -81,7 +81,7 @@ public class UserController {
     @GetMapping("/list")
     public Result<PageResult<UserVO>> list(
             @Parameter(description = "页码") @Min(1) @RequestParam(defaultValue = "1") Long pageNum,
-            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Max(value = 100, message = "每页最大100条") Long pageSize,
+            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Min(1) @Max(value = 100, message = "每页最大100条") Long pageSize,
             @Parameter(description = "用户名") @RequestParam(required = false) String username) {
         return Result.success(userService.pageQuery(pageNum, pageSize, username));
     }

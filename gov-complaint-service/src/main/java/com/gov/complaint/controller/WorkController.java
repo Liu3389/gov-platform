@@ -34,7 +34,7 @@ public class WorkController {
     @GetMapping("/list")
     public Result<PageResult<WorkVO>> list(
             @Parameter(description = "页码", example = "1") @Min(1) @RequestParam(defaultValue = "1") Long pageNum,
-            @Parameter(description = "每页大小", example = "10") @RequestParam(defaultValue = "10") @Max(value = 100, message = "每页最大100条") Long pageSize,
+            @Parameter(description = "每页大小", example = "10") @RequestParam(defaultValue = "10") @Min(1) @Max(value = 100, message = "每页最大100条") Long pageSize,
             @Parameter(description = "关键词", example = "路灯") @RequestParam(required = false) String keyword,
             @Parameter(description = "工单状态", example = "0") @RequestParam(required = false) String status) {
         return Result.success(workService.pageQueryVO(pageNum, pageSize, keyword, status));

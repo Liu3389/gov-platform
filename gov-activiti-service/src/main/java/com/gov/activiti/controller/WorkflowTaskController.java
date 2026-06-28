@@ -47,7 +47,7 @@ public class WorkflowTaskController {
     @GetMapping("/todo")
     public Result<PageResult<TodoTaskVO>> listTodo(
             @Parameter(description = "页码") @RequestParam(defaultValue = "1") @Min(1) Long pageNum,
-            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Max(value = 100, message = "每页最大100条") Long pageSize,
+            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Min(1) @Max(value = 100, message = "每页最大100条") Long pageSize,
             @Parameter(description = "用户ID（从Token自动获取）") @RequestParam @NotBlank(message = "用户ID不能为空") String userId) {
         return Result.success(workflowTaskService.pageQueryTodo(pageNum, pageSize, userId));
     }
@@ -57,7 +57,7 @@ public class WorkflowTaskController {
     @GetMapping("/list")
     public Result<PageResult<TaskVO>> list(
             @Parameter(description = "页码") @RequestParam(defaultValue = "1") @Min(1) Long pageNum,
-            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Max(value = 100, message = "每页最大100条") Long pageSize,
+            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Min(1) @Max(value = 100, message = "每页最大100条") Long pageSize,
             @Parameter(description = "任务名称（模糊搜索）") @RequestParam(required = false) String taskName,
             @Parameter(description = "流程定义Key") @RequestParam(required = false) String processKey,
             @Parameter(description = "任务状态") @RequestParam(required = false) String status,

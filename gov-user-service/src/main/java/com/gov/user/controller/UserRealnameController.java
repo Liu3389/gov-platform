@@ -38,7 +38,7 @@ public class UserRealnameController {
     @GetMapping("/page")
     public Result<PageResult<UserRealnameVO>> page(
             @Parameter(description = "页码") @Min(1) @RequestParam(defaultValue = "1") Long pageNum,
-            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Max(value = 100, message = "每页最大100条") Long pageSize,
+            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Min(1) @Max(value = 100, message = "每页最大100条") Long pageSize,
             @Parameter(description = "审核状态：0待审 1通过 2驳回") @RequestParam(required = false) Integer verifyStatus) {
         return Result.success(userRealnameService.pageQueryVO(pageNum, pageSize, verifyStatus));
     }

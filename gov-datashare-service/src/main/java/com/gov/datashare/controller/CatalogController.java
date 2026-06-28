@@ -31,7 +31,7 @@ public class CatalogController {
     @GetMapping("/list")
     public Result<PageResult<CatalogVO>> list(
             @Parameter(description = "页码", example = "1") @Min(1) @RequestParam(defaultValue = "1") Long pageNum,
-            @Parameter(description = "每页大小", example = "10") @RequestParam(defaultValue = "10") @Max(value = 100, message = "每页最大100条") Long pageSize,
+            @Parameter(description = "每页大小", example = "10") @RequestParam(defaultValue = "10") @Min(1) @Max(value = 100, message = "每页最大100条") Long pageSize,
             @Parameter(description = "关键词", example = "用户") @RequestParam(required = false) String keyword,
             @Parameter(description = "状态", example = "1") @RequestParam(required = false) String status) {
         return Result.success(catalogService.pageQueryVO(pageNum, pageSize, keyword, status));

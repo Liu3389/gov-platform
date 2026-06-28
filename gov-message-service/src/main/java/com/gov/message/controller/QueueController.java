@@ -34,7 +34,7 @@ public class QueueController {
     @GetMapping("/list")
     public Result<PageResult<QueueVO>> list(
             @Parameter(description = "页码", example = "1") @Min(1) @RequestParam(defaultValue = "1") Long pageNum,
-            @Parameter(description = "每页大小", example = "10") @RequestParam(defaultValue = "10") @Max(value = 100, message = "每页最大100条") Long pageSize,
+            @Parameter(description = "每页大小", example = "10") @RequestParam(defaultValue = "10") @Min(1) @Max(value = 100, message = "每页最大100条") Long pageSize,
             @Parameter(description = "队列状态", example = "0") @RequestParam(required = false) Integer queueStatus,
             @Parameter(description = "优先级", example = "0") @RequestParam(required = false) Integer priority) {
         return Result.success(queueService.pageQueryVO(pageNum, pageSize, queueStatus, priority));

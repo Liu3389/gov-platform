@@ -34,7 +34,7 @@ public class PublicController {
     @GetMapping("/notice/list")
     public Result<PageResult<NoticeVO>> noticeList(
             @Parameter(description = "页码") @Min(1) @RequestParam(defaultValue = "1") Long pageNum,
-            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Max(value = 100, message = "每页最大100条") Long pageSize,
+            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Min(1) @Max(value = 100, message = "每页最大100条") Long pageSize,
             @Parameter(description = "关键词") @RequestParam(required = false) String keyword) {
         NoticeQueryDTO queryDTO = new NoticeQueryDTO();
         queryDTO.setKeyword(keyword);
@@ -58,7 +58,7 @@ public class PublicController {
     @GetMapping("/policy/list")
     public Result<PageResult<PolicyVO>> policyList(
             @Parameter(description = "页码") @Min(1) @RequestParam(defaultValue = "1") Long pageNum,
-            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Max(value = 100, message = "每页最大100条") Long pageSize,
+            @Parameter(description = "每页大小") @RequestParam(defaultValue = "10") @Min(1) @Max(value = 100, message = "每页最大100条") Long pageSize,
             @Parameter(description = "政策类型") @RequestParam(required = false) Integer policyType) {
         return Result.success(policyService.pageQueryVO(pageNum, pageSize, policyType, 1));
     }
