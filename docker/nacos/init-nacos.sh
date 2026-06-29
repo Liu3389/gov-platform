@@ -22,7 +22,7 @@ echo "========================================="
 echo "[1/5] 等待 Nacos 启动..."
 MAX_RETRIES=60
 RETRY_COUNT=0
-until curl -s "${NACOS_URL}/nacos/v1/console/health/readiness" | grep -q "ok"; do
+until curl -s "${NACOS_URL}/nacos/v1/console/health/readiness" | grep -qi "ok"; do
   RETRY_COUNT=$((RETRY_COUNT + 1))
   if [ $RETRY_COUNT -ge $MAX_RETRIES ]; then
     echo "ERROR: Nacos 启动超时，请检查 Nacos 容器日志"

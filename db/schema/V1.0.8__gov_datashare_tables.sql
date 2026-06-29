@@ -1,3 +1,4 @@
+SET NAMES utf8mb4;
 USE gov_datashare;
 
 -- 数据源表

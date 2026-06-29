@@ -35,23 +35,8 @@ spring:
 # ==================== Seata 分布式事务 ====================
 # 依赖已在 gov-common/pom.xml 中引入，每个服务的 application-dev.yml 中设置 seata.enabled
 # 当前 seata.enabled=false（不连 Server），部署 Seata Server 后改为 true 即可
-# docker-compose 中添加 seata-server 容器后：
-#   seata:
-#     enabled: true
-#     application-id: ${spring.application.name}
-#     tx-service-group: gov-platform-group
-#     config:
-#       type: nacos
-#       nacos:
-#         server-addr: localhost:8848
-#         namespace: gov-platform
-#         group: SEATA_GROUP
-#     registry:
-#       type: nacos
-#       nacos:
-#         server-addr: localhost:8848
-#         namespace: gov-platform
-#         group: SEATA_GROUP
+seata:
+  enabled: false
 
 # Feign 中启用 Sentinel
 feign:

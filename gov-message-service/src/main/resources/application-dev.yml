@@ -68,3 +68,6 @@ knife4j:
 logging:
   level:
     com.gov.message: debug
+
+seata:
+  enabled: false
