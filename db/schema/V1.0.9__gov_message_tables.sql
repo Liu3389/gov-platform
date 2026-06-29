@@ -1,3 +1,4 @@
+SET NAMES utf8mb4;
 USE gov_message;
 
 -- 消息模板表
